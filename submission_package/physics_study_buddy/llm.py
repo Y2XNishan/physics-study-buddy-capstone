@@ -342,12 +342,15 @@ class LLMBackend:
     def _chat(self, messages: list[dict[str, str]]) -> str:
         if self.client is None:
             return ""
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=messages,
-            temperature=0.2,
-        )
-        return response.choices[0].message.content or ""
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=messages,
+                temperature=0.2,
+            )
+            return response.choices[0].message.content or ""
+        except Exception as exc:
+            return ""
 
     def _offline_route(self, question: str) -> str:
         lowered = question.lower()
