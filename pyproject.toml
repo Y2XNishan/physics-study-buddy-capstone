@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "physics-study-buddy"
+version = "1.0.0"
+description = "A grounded physics tutor agent for B.Tech students using RAG, LangGraph, ChromaDB, and Streamlit"
+readme = "submission_package/README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "langgraph",
+    "chromadb",
+    "scikit-learn",
+    "numpy",
+    "streamlit",
+    "reportlab",
+    "pytest"
+]
+
+[tool.setuptools.packages.find]
+where = ["submission_package"]
