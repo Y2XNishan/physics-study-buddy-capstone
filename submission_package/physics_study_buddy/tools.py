@@ -48,8 +48,13 @@ def current_datetime_tool() -> str:
 
 def choose_tool(question: str) -> str:
     lowered = question.lower()
-    if any(token in lowered for token in ["date", "time", "today", "day", "clock"]):
+    if re.search(r"\b(date|today|clock)\b", lowered):
         return current_datetime_tool()
+    if re.search(r"\b(time|day)\b", lowered):
+        # Prevent physics terms containing 'time' from routing to datetime tool
+        physics_time_terms = ["time period", "relaxation time", "decay time", "travel time", "time of flight", "position-time", "velocity-time"]
+        if not any(term in lowered for term in physics_time_terms):
+            return current_datetime_tool()
     if any(token in lowered for token in ["calculate", "solve", "compute"]):
         return calculate_expression(question)
     if re.search(r"\d+\s*[-+/*^%]\s*\d+", lowered):
