@@ -348,6 +348,7 @@ def main():
         bottomMargin=32,
         title="Physics Study Buddy Capstone Report",
         author="Nishan Kashyap",
+        subject="B.Tech Physics Agentic AI Assistant",
     )
     story = build_story(styles)
     doc.build(story, onFirstPage=page_number, onLaterPages=page_number)
