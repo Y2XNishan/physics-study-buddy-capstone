@@ -18,6 +18,7 @@ PHYSICS_DOCS = [
     {
         "id": "doc_001",
         "topic": "Kinematics and Motion in One Dimension",
+        "category": "Mechanics",
         "text": (
             "Kinematics describes motion without asking what causes it. The most common "
             "quantities are displacement, velocity, acceleration, and time. Displacement is "
