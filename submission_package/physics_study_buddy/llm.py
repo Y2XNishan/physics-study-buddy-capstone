@@ -178,10 +178,13 @@ PHYSICS_TERMS = {
 
 REFUSAL_PATTERNS = [
     "ignore your instructions",
+    "ignore previous instructions",
     "reveal the system prompt",
     "show system prompt",
     "hidden prompt",
     "developer message",
+    "override system prompt",
+    "bypass safety",
 ]
 
 
@@ -191,6 +194,8 @@ OUT_OF_SCOPE_PATTERNS = [
     "admission",
     "tuition",
     "mess fee",
+    "canteen bill",
+    "placement drive",
 ]
 
 
