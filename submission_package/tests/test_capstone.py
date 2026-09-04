@@ -113,3 +113,15 @@ def test_faithfulness_eval_edge_cases():
     score_perfect = llm._offline_faithfulness("Velocity is displacement divided by time.", "Velocity is displacement divided by time.")
     assert score_perfect == 1.0
 
+
+def test_knowledge_base_get_doc_by_topic():
+    agent = build_agent()
+    kb = agent.knowledge_base
+
+    doc_optics = kb.get_doc_by_topic("Ray Optics")
+    assert doc_optics is not None
+    assert "Snell" in doc_optics["text"]
+
+    doc_none = kb.get_doc_by_topic("Nonexistent Category Topic 999")
+    assert doc_none is None
+
