@@ -1,8 +1,22 @@
-from __future__ import annotations
+import re
 
-from uuid import uuid4
 
-import streamlit as st
+def format_physics_formulas(text: str) -> str:
+    """Wrap common physics formulas in LaTeX formatting for Streamlit display."""
+    formulas = [
+        (r"\bV\s*=\s*IR\b", r"$V = IR$"),
+        (r"\bF\s*=\s*ma\b", r"$F = ma$"),
+        (r"\bv\s*=\s*u\s*\+\s*at\b", r"$v = u + at$"),
+        (r"\bs\s*=\s*ut\s*\+\s*1/2\s*at\^2\b", r"$s = ut + \\frac{1}{2}at^2$"),
+        (r"\bv\^2\s*=\s*u\^2\s*\+\s*2as\b", r"$v^2 = u^2 + 2as$"),
+        (r"\bE\s*=\s*mc\^2\b", r"$E = mc^2$"),
+        (r"\b1/2\s*mv\^2\b", r"$\\frac{1}{2}mv^2$"),
+        (r"\bmgh\b", r"$mgh$"),
+    ]
+    formatted = text
+    for pattern, replacement in formulas:
+        formatted = re.sub(pattern, replacement, formatted)
+    return formatted
 
 from physics_study_buddy.agent_core import build_agent
 
