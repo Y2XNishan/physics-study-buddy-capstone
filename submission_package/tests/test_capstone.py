@@ -50,3 +50,12 @@ def test_datetime_tool_word_boundary_matching():
     res_date = choose_tool("What is today's date?")
     assert "Current date" in res_date
 
+
+def test_name_extraction_phrasings():
+    from physics_study_buddy.agent_core import _extract_name
+
+    assert _extract_name("My name is Nishan Kashyap.") == "Nishan Kashyap"
+    assert _extract_name("I am Ria!") == "Ria"
+    assert _extract_name("Call me Alex.") == "Alex"
+    assert _extract_name("I am studying physics") == ""
+
