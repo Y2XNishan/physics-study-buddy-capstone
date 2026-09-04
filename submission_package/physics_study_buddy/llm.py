@@ -360,10 +360,12 @@ class LLMBackend:
             return "skip"
         if any(pattern in lowered for pattern in OUT_OF_SCOPE_PATTERNS):
             return "skip"
-        if any(token in lowered for token in ["date", "today", "clock", "current time"]):
+        if re.search(r"\b(date|today|clock)\b", lowered) or "current time" in lowered:
             return "tool"
-        if "time" in lowered and not any(token in lowered for token in ["time period", "pendulum", "shm"]):
-            return "tool"
+        if re.search(r"\btime\b", lowered):
+            physics_time_context = ["time period", "pendulum", "shm", "relaxation time", "decay time", "travel time", "flight", "graph", "displacement", "velocity", "acceleration"]
+            if not any(term in lowered for term in physics_time_context) and any(kw in lowered for kw in ["what time", "current time", "time now", "tell time"]):
+                return "tool"
         if any(token in lowered for token in ["calculate", "solve", "compute"]):
             return "tool"
         if re.search(r"\d+\s*[-+/*^%]\s*\d+", lowered):
