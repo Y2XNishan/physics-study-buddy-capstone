@@ -12,7 +12,12 @@ def main() -> None:
     parser.add_argument("--thread-id", type=str, default=default_thread_id())
     parser.add_argument("--interactive", action="store_true", help="Run in interactive chat mode")
     parser.add_argument("--json", action="store_true", help="Output result as formatted JSON")
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose debug logging")
     args = parser.parse_args()
+
+    if args.verbose:
+        import logging
+        logging.basicConfig(level=logging.INFO)
 
     agent = build_agent()
 
