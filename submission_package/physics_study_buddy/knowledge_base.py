@@ -292,7 +292,7 @@ def build_knowledge_base() -> KnowledgeBase:
         ids=[doc["id"] for doc in PHYSICS_DOCS],
         documents=texts,
         metadatas=[{"topic": doc["topic"]} for doc in PHYSICS_DOCS],
-        embeddings=np.array(embeddings).tolist(),
+        embeddings=embeddings if isinstance(embeddings, list) else np.array(embeddings).tolist(),
     )
     return KnowledgeBase(
         collection=collection,
