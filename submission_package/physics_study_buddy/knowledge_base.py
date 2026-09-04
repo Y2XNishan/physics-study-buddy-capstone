@@ -270,6 +270,13 @@ class KnowledgeBase:
             "sources": sources,
         }
 
+    def get_doc_by_topic(self, topic_name: str) -> dict | None:
+        """Find a document in the knowledge base by matching topic name."""
+        for doc in self.docs:
+            if topic_name.lower() in doc["topic"].lower():
+                return doc
+        return None
+
 
 import logging
 
