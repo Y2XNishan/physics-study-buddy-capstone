@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Iterable
 
@@ -254,10 +255,13 @@ class KnowledgeBase:
         for doc, metadata, distance in zip(docs, metadatas, distances):
             topic = metadata.get("topic", "Unknown Topic")
             formatted_chunks.append(f"[{topic}]\n{doc}")
+            dist_val = float(distance) if distance is not None else 0.0
+            if math.isnan(dist_val) or math.isinf(dist_val):
+                dist_val = 0.0
             sources.append(
                 {
                     "topic": topic,
-                    "distance": round(float(distance), 4),
+                    "distance": round(dist_val, 4),
                 }
             )
         return {
