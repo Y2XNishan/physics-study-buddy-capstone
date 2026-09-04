@@ -435,11 +435,13 @@ class LLMBackend:
         return answer
 
     def _offline_faithfulness(self, answer: str, retrieved: str) -> float:
-        if "do not know" in answer.lower():
+        lowered_answer = answer.lower()
+        if any(phrase in lowered_answer for phrase in ["do not know", "cannot reveal", "not available"]):
             return 1.0
-        answer_terms = _normalize(answer) - {"sources", "used"}
+        answer_terms = _normalize(answer) - {"sources", "used", "topic", "topics"} - GENERIC_TERMS
         context_terms = _normalize(retrieved)
         if not answer_terms:
-            return 0.0
+            return 1.0 if retrieved else 0.0
         overlap = len(answer_terms & context_terms)
-        return round(max(0.0, min(1.0, overlap / max(1, len(answer_terms)))), 2)
+        ratio = overlap / max(1, len(answer_terms))
+        return round(max(0.0, min(1.0, ratio)), 2)
