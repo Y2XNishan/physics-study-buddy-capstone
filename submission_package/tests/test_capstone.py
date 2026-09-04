@@ -22,3 +22,19 @@ def test_tool_route_for_calculator():
     assert result["route"] == "tool"
     assert "Calculator result" in result["answer"]
 
+
+def test_calculator_math_functions_and_division_by_zero():
+    from physics_study_buddy.tools import calculate_expression
+    
+    # Test sqrt and functions
+    res_sqrt = calculate_expression("Calculate sqrt(16) + 5")
+    assert "9.0000" in res_sqrt
+
+    # Test division by zero
+    res_zero = calculate_expression("Calculate 10 / 0")
+    assert "Division by zero is undefined" in res_zero
+
+    # Test overflow
+    res_ovf = calculate_expression("Calculate 10 ** 1000")
+    assert "overflow" in res_ovf or "error" in res_ovf
+
