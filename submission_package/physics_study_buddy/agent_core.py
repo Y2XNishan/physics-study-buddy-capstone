@@ -62,12 +62,13 @@ def _extract_name(question: str) -> str:
         r"call me ([A-Za-z '-]{2,40})",
         r"name is ([A-Za-z '-]{2,40})",
     ]
-    NON_NAME_WORDS = {"studying", "physics", "asking", "here", "ready", "a student", "a learner", "btech", "b.tech", "student"}
+    NON_NAME_WORDS = {"studying", "physics", "asking", "here", "ready", "student", "learner", "btech", "b.tech", "a"}
     for pattern in patterns:
         match = re.search(pattern, question, re.IGNORECASE)
         if match:
             raw_name = match.group(1).strip(".,!? ").strip()
-            if raw_name and raw_name.lower() not in NON_NAME_WORDS:
+            name_tokens = set(raw_name.lower().split())
+            if raw_name and not (name_tokens & NON_NAME_WORDS):
                 return raw_name.title()
     return ""
 
