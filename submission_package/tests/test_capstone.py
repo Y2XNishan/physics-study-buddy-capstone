@@ -100,3 +100,16 @@ def test_multi_turn_memory_and_reset():
     res_after_reset = agent.ask("What is my name?", "pytest-multiturn-new")
     assert "do not know your name" in res_after_reset["answer"].lower()
 
+
+def test_faithfulness_eval_edge_cases():
+    agent = build_agent()
+    llm = agent.llm_backend
+
+    # 1. Answer with refusal phrase returns 1.0
+    score_refusal = llm._offline_faithfulness("I do not know that from the retrieved context alone.", "some context")
+    assert score_refusal == 1.0
+
+    # 2. Perfect overlap returns 1.0
+    score_perfect = llm._offline_faithfulness("Velocity is displacement divided by time.", "Velocity is displacement divided by time.")
+    assert score_perfect == 1.0
+
