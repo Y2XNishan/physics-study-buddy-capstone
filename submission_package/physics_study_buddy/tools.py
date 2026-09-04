@@ -6,6 +6,8 @@ import re
 from datetime import datetime
 
 
+import math
+
 SAFE_OPERATORS = {
     ast.Add: operator.add,
     ast.Sub: operator.sub,
@@ -16,14 +18,34 @@ SAFE_OPERATORS = {
     ast.Mod: operator.mod,
 }
 
+SAFE_FUNCTIONS = {
+    "sqrt": math.sqrt,
+    "sin": math.sin,
+    "cos": math.cos,
+    "tan": math.tan,
+    "log": math.log,
+    "exp": math.exp,
+    "abs": abs,
+}
+
+SAFE_CONSTANTS = {
+    "pi": math.pi,
+    "e": math.e,
+}
+
 
 def _safe_eval(node: ast.AST) -> float:
     if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
         return float(node.value)
+    if isinstance(node, ast.Name) and node.id in SAFE_CONSTANTS:
+        return float(SAFE_CONSTANTS[node.id])
     if isinstance(node, ast.BinOp) and type(node.op) in SAFE_OPERATORS:
         return SAFE_OPERATORS[type(node.op)](_safe_eval(node.left), _safe_eval(node.right))
     if isinstance(node, ast.UnaryOp) and type(node.op) in SAFE_OPERATORS:
         return SAFE_OPERATORS[type(node.op)](_safe_eval(node.operand))
+    if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in SAFE_FUNCTIONS:
+        args = [_safe_eval(arg) for arg in node.args]
+        return float(SAFE_FUNCTIONS[node.func.id](*args))
     raise ValueError("Unsupported expression")
 
 
