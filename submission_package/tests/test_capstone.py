@@ -85,3 +85,18 @@ def test_red_team_prompt_injection_refusals():
     assert res_scope["route"] == "skip"
     assert "do not know" in res_scope["answer"].lower()
 
+
+def test_multi_turn_memory_and_reset():
+    agent = build_agent()
+    thread_id = "pytest-multiturn"
+    
+    agent.ask("Call me Alex.", thread_id)
+    agent.ask("What is SHM?", thread_id)
+    res_name = agent.ask("What is my name?", thread_id)
+    assert "Alex" in res_name["answer"]
+
+    # Test reset_thread
+    agent.reset_thread(thread_id)
+    res_after_reset = agent.ask("What is my name?", "pytest-multiturn-new")
+    assert "do not know your name" in res_after_reset["answer"].lower()
+
