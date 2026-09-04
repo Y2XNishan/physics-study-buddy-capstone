@@ -340,13 +340,8 @@ class LLMBackend:
             return self._offline_faithfulness(answer, retrieved)
 
     def _chat(self, messages: list[dict[str, str]]) -> str:
-        if self.provider == "openai":
-            response = self.client.chat.completions.create(
-                model=self.model_name,
-                messages=messages,
-                temperature=0.2,
-            )
-            return response.choices[0].message.content or ""
+        if self.client is None:
+            return ""
         response = self.client.chat.completions.create(
             model=self.model_name,
             messages=messages,
