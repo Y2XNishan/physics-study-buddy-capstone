@@ -34,6 +34,12 @@ GENERIC_TERMS = {
     "words",
     "mean",
     "does",
+    "define",
+    "describe",
+    "summarize",
+    "tell",
+    "how",
+    "why",
 }
 
 
