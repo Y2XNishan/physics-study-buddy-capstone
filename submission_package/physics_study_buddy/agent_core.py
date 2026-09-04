@@ -45,10 +45,19 @@ class PhysicsStudyBuddyAgent:
 
 
 def _extract_name(question: str) -> str:
-    match = re.search(r"my name is ([A-Za-z ]{2,40})", question, re.IGNORECASE)
-    if not match:
-        return ""
-    return match.group(1).strip().title()
+    patterns = [
+        r"my name is ([A-Za-z '-]{2,40})",
+        r"i am ([A-Za-z '-]{2,40})",
+        r"call me ([A-Za-z '-]{2,40})",
+        r"name is ([A-Za-z '-]{2,40})",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, question, re.IGNORECASE)
+        if match:
+            raw_name = match.group(1).strip(".,!? ").strip()
+            if raw_name:
+                return raw_name.title()
+    return ""
 
 
 def build_agent() -> PhysicsStudyBuddyAgent:
