@@ -1,5 +1,4 @@
-from __future__ import annotations
-
+import logging
 import re
 from dataclasses import dataclass
 from typing import Any, TypedDict
@@ -11,6 +10,8 @@ from langgraph.graph import END, StateGraph
 from physics_study_buddy.knowledge_base import KnowledgeBase, build_knowledge_base
 from physics_study_buddy.llm import LLMBackend
 from physics_study_buddy.tools import choose_tool
+
+logger = logging.getLogger("physics_study_buddy")
 
 
 MAX_EVAL_RETRIES = 2
@@ -79,13 +80,13 @@ def build_agent() -> PhysicsStudyBuddyAgent:
 
     def router_node(state: CapstoneState) -> CapstoneState:
         route = llm_backend.route(state.get("question", ""), state.get("messages", []))
-        print(f"[TRACE] router_node -> route={route}")
+        logger.info("[TRACE] router_node -> route=%s", route)
         return {"route": route}
 
     def retrieval_node(state: CapstoneState) -> CapstoneState:
         result = knowledge_base.query(state.get("question", ""), top_k=3)
         topics = ", ".join(source["topic"] for source in result["sources"])
-        print(f"[TRACE] retrieval_node -> topics={topics}")
+        logger.info("[TRACE] retrieval_node -> topics=%s", topics)
         return {
             "retrieved": result["retrieved"],
             "sources": result["sources"],
@@ -93,7 +94,7 @@ def build_agent() -> PhysicsStudyBuddyAgent:
         }
 
     def skip_retrieval_node(state: CapstoneState) -> CapstoneState:
-        print("[TRACE] skip_retrieval_node -> memory_only")
+        logger.info("[TRACE] skip_retrieval_node -> memory_only")
         return {
             "retrieved": "",
             "sources": [],
@@ -102,7 +103,7 @@ def build_agent() -> PhysicsStudyBuddyAgent:
 
     def tool_node(state: CapstoneState) -> CapstoneState:
         tool_result = choose_tool(state.get("question", ""))
-        print(f"[TRACE] tool_node -> {tool_result}")
+        logger.info("[TRACE] tool_node -> %s", tool_result)
         return {
             "tool_result": tool_result,
             "retrieved": "",
@@ -119,12 +120,12 @@ def build_agent() -> PhysicsStudyBuddyAgent:
             user_name=state.get("user_name", ""),
             sources=state.get("sources", []),
         )
-        print(f"[TRACE] answer_node -> answer_length={len(answer)}")
+        logger.info("[TRACE] answer_node -> answer_length=%d", len(answer))
         return {"answer": answer}
 
     def eval_node(state: CapstoneState) -> CapstoneState:
         if not state.get("retrieved"):
-            print("[TRACE] eval_node -> no_retrieval_skip")
+            logger.info("[TRACE] eval_node -> no_retrieval_skip")
             return {"faithfulness": 1.0, "eval_retries": state.get("eval_retries", 0)}
         faithfulness = llm_backend.evaluate(
             question=state.get("question", ""),
@@ -132,13 +133,13 @@ def build_agent() -> PhysicsStudyBuddyAgent:
             retrieved=state.get("retrieved", ""),
         )
         retries = state.get("eval_retries", 0) + 1
-        print(f"[TRACE] eval_node -> faithfulness={faithfulness}, retries={retries}")
+        logger.info("[TRACE] eval_node -> faithfulness=%.2f, retries=%d", faithfulness, retries)
         return {"faithfulness": faithfulness, "eval_retries": retries}
 
     def save_node(state: CapstoneState) -> CapstoneState:
         messages = list(state.get("messages", []))
         messages.append({"role": "assistant", "content": state.get("answer", "")})
-        print("[TRACE] save_node -> persisted answer")
+        logger.info("[TRACE] save_node -> persisted answer")
         return {"messages": messages[-6:]}
 
     def route_decision(state: CapstoneState) -> str:
