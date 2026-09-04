@@ -52,7 +52,19 @@ def choose_tool(question: str) -> str:
         return current_datetime_tool()
     if re.search(r"\b(time|day)\b", lowered):
         # Prevent physics terms containing 'time' from routing to datetime tool
-        physics_time_terms = ["time period", "relaxation time", "decay time", "travel time", "time of flight", "position-time", "velocity-time"]
+        physics_time_terms = [
+            "time period",
+            "relaxation time",
+            "decay time",
+            "travel time",
+            "time of flight",
+            "position-time",
+            "velocity-time",
+            "time taken",
+            "half life",
+            "coherence time",
+            "transit time",
+        ]
         if not any(term in lowered for term in physics_time_terms):
             return current_datetime_tool()
     if any(token in lowered for token in ["calculate", "solve", "compute"]):
