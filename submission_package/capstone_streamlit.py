@@ -33,7 +33,18 @@ def reset_conversation() -> None:
     st.session_state.messages = []
 
 
-st.set_page_config(page_title="Physics Study Buddy", page_icon="P", layout="wide")
+st.set_page_config(page_title="Physics Study Buddy", page_icon="⚛️", layout="wide")
+
+st.markdown(
+    """
+    <style>
+    .stApp { max-width: 1200px; margin: 0 auto; }
+    .stChatMessage { border-radius: 10px; padding: 12px; margin-bottom: 8px; }
+    .stMetric { background-color: #f8f9fa; border-radius: 8px; padding: 8px; }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 agent = load_agent()
 
