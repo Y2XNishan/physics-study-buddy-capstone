@@ -146,10 +146,10 @@ def build_agent() -> PhysicsStudyBuddyAgent:
 
     def eval_decision(state: CapstoneState) -> str:
         if state.get("retrieved") and state.get("faithfulness", 0.0) < 0.7:
-            if state.get("eval_retries", 0) <= MAX_EVAL_RETRIES:
-                print("[TRACE] eval_decision -> RETRY")
+            if state.get("eval_retries", 0) < MAX_EVAL_RETRIES:
+                logger.debug("[TRACE] eval_decision -> RETRY")
                 return "answer"
-        print("[TRACE] eval_decision -> PASS")
+        logger.debug("[TRACE] eval_decision -> PASS")
         return "save"
 
     graph = StateGraph(CapstoneState)
