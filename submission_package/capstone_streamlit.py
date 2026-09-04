@@ -49,9 +49,18 @@ with st.sidebar:
         "It answers from a grounded physics knowledge base, remembers thread context, "
         "uses tools for date/time and arithmetic, and evaluates answer faithfulness."
     )
-    st.subheader("Topics Covered")
-    for topic in agent.knowledge_base.topics:
-        st.write(f"- {topic}")
+    st.subheader("Quick Presets")
+    preset_col1, preset_col2 = st.columns(2)
+    with preset_col1:
+        if st.button("Ohm's Law", use_container_width=True):
+            st.session_state.preset_query = "What is Ohm's law?"
+        if st.button("Calc Test", use_container_width=True):
+            st.session_state.preset_query = "Calculate 12 * 4 + 5"
+    with preset_col2:
+        if st.button("SHM Info", use_container_width=True):
+            st.session_state.preset_query = "Explain Simple Harmonic Motion"
+        if st.button("Intro Name", use_container_width=True):
+            st.session_state.preset_query = "My name is Nishan."
     st.subheader("Runtime Status")
     st.write(f"**LLM Backend:** `{agent.llm_backend.provider}`")
     st.write(f"**Embedder:** `{agent.knowledge_base.embedder_name}`")
