@@ -44,6 +44,16 @@ class PhysicsStudyBuddyAgent:
         )
         return result
 
+    def reset_thread(self, thread_id: str) -> None:
+        """Clear memory saver state for a given thread_id."""
+        try:
+            config = {"configurable": {"thread_id": thread_id}}
+            if hasattr(self.app, "checkpointer") and self.app.checkpointer:
+                self.app.checkpointer.put(config, {}, {}, {})
+                logger.info("Cleared thread memory for %s", thread_id)
+        except Exception as exc:
+            logger.warning("Could not clear thread %s: %s", thread_id, exc)
+
 
 def _extract_name(question: str) -> str:
     patterns = [
