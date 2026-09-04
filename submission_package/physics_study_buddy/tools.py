@@ -29,11 +29,14 @@ def _safe_eval(node: ast.AST) -> float:
 
 def calculate_expression(question: str) -> str:
     try:
-        match = re.search(r"([-+/*()%\d.\s^]+)", question)
+        # Strip common action keywords first
+        cleaned = re.sub(r"(?i)^(calculate|solve|compute|what is|find)\s+", "", question.strip())
+        cleaned = cleaned.rstrip("?.!")
+        match = re.search(r"([-+/*()%\d.\s^]+)", cleaned)
         if not match:
             return "Calculator tool could not find a valid arithmetic expression."
         expression = match.group(1).strip().replace("^", "**")
-        if not expression:
+        if not expression or not any(char.isdigit() for char in expression):
             return "Calculator tool could not find a valid arithmetic expression."
         value = _safe_eval(ast.parse(expression, mode="eval").body)
         return f"Calculator result: {expression.replace('**', '^')} = {value:.4f}"
