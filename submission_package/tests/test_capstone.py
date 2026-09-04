@@ -59,3 +59,16 @@ def test_name_extraction_phrasings():
     assert _extract_name("Call me Alex.") == "Alex"
     assert _extract_name("I am studying physics") == ""
 
+
+def test_expanded_physics_vocabulary_offline_answers():
+    agent = build_agent()
+    # Test friction query (was failing in original codebase due to missing friction token)
+    res_friction = agent.ask("Explain friction and static friction.", "pytest-friction")
+    assert res_friction["route"] == "retrieve"
+    assert "friction" in res_friction["answer"].lower()
+
+    # Test work-energy query
+    res_work = agent.ask("What is work energy theorem?", "pytest-work")
+    assert res_work["route"] == "retrieve"
+    assert "kinetic energy" in res_work["answer"].lower()
+
