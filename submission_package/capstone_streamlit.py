@@ -13,6 +13,8 @@ def load_agent():
 
 
 def reset_conversation() -> None:
+    if "thread_id" in st.session_state and "agent" in globals():
+        load_agent().reset_thread(st.session_state.thread_id)
     st.session_state.thread_id = f"physics-ui-{uuid4()}"
     st.session_state.messages = []
 
