@@ -199,18 +199,18 @@ def _top_sentences(question: str, retrieved: str, limit: int = 4) -> list[str]:
     sentences = [
         sentence.strip()
         for sentence in re.split(r"(?<=[.!?])\s+|\n+", retrieved)
-        if len(sentence.strip()) > 20 and not sentence.strip().startswith("[")
+        if len(sentence.strip()) >= 10 and not sentence.strip().startswith("[")
     ]
     scored = []
     for sentence in sentences:
         sentence_terms = _normalize(sentence)
         score = len(question_terms & sentence_terms)
-        if any(keyword in sentence.lower() for keyword in ["formula", "equals", "states", "given by"]):
+        if any(keyword in sentence.lower() for keyword in ["formula", "equals", "states", "given by", "=", "is"]):
             score += 1
         if any(term in sentence_terms for term in question_terms):
             score += 1
         scored.append((score, sentence))
-    ranked = [sentence for score, sentence in sorted(scored, reverse=True) if score >= 2]
+    ranked = [sentence for score, sentence in sorted(scored, reverse=True) if score >= 1]
     unique = []
     for sentence in ranked:
         if sentence not in unique:
