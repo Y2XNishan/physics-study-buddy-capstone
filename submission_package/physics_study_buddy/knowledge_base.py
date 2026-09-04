@@ -271,14 +271,21 @@ class KnowledgeBase:
         }
 
 
+import logging
+
+logger = logging.getLogger("physics_study_buddy")
+
+
 def _build_embedder(texts: list[str]) -> tuple[object, str]:
     if SentenceTransformer is not None:
         try:
             embedder = SentenceTransformer("all-MiniLM-L6-v2", local_files_only=True)
             embedder.encode(["warmup"], show_progress_bar=False)
+            logger.info("Loaded SentenceTransformer embedder successfully")
             return embedder, "SentenceTransformer(all-MiniLM-L6-v2)"
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug("SentenceTransformer not loaded: %s", exc)
+    logger.info("Using TfidfVectorizer fallback embedder")
     return TfidfEmbedder(texts), "TfidfVectorizer fallback"
 
 
