@@ -1,36 +1,72 @@
-# Physics Study Buddy
+# Physics Study Buddy — Agentic AI Capstone
 
-This project implements the Agentic AI capstone in the `Study Buddy - Physics` domain from the helper document. The assistant is designed for B.Tech students who need grounded concept support outside class hours.
+A grounded, high-faithfulness Agentic AI assistant built with **LangGraph**, **ChromaDB**, **Streamlit**, and **Pytest** for B.Tech Physics learners.
 
-## What it includes
+---
 
-- LangGraph `StateGraph` with 8 nodes: `memory`, `router`, `retrieve`, `skip`, `tool`, `answer`, `eval`, `save`
-- ChromaDB knowledge base with 12 topic-specific physics documents
-- Memory persistence through `MemorySaver` and `thread_id`
-- Tool support for current date/time and arithmetic
-- Faithfulness evaluation with retry loop
-- Streamlit deployment in `capstone_streamlit.py`
-- Test runner in `run_capstone_tests.py`
-- Notebook submission artifact in `day13_capstone.ipynb`
-- Submission report draft in `report/project_documentation.md`
+## 🌟 Architecture & Capstone Highlights
 
-## Run locally
+- **LangGraph StateGraph Engine**: Built with an isolated 8-node state machine (`memory`, `router`, `retrieve`, `skip`, `tool`, `answer`, `eval`, `save`).
+- **Grounded Vector Search (RAG)**: Uses an in-memory ChromaDB collection populated with 12 focused B.Tech physics topic modules.
+- **Thread Memory Persistence**: Full conversational context retention across turns managed with `MemorySaver` and `thread_id`.
+- **Tool Scaffolding & Disambiguation**:
+  - **Safe Math Calculator**: Evaluates arithmetic, power exponents, and functions (`sqrt`, `sin`, `cos`, `tan`, `pi`, `e`) with ZeroDivision & Overflow protection.
+  - **Date/Time Tool**: Word-boundary regex disambiguates datetime queries from physics expressions (e.g. *time period of SHM* vs *current date*).
+- **Faithfulness Self-Evaluation Loop**: Automatically rates answer faithfulness against retrieved context and triggers targeted retries for low-scoring answers.
+- **Deterministic Offline Fallback**: Fully functional without requiring external LLM cloud API keys, while supporting optional **OpenAI** or **Groq** backends.
+- **Streamlit Web Interface**: Features LaTeX formula formatting (`$V=IR$`), color-coded runtime status metrics, topic preset buttons, and expandable source cards.
+
+---
+
+## 🚀 Quickstart & Local Setup
 
 ```bash
-python -m pip install -r requirements.txt
-python agent.py --question "What is Ohm's law?"
-python run_capstone_tests.py
-streamlit run capstone_streamlit.py
+# 1. Install dependencies
+pip install -r submission_package/requirements.txt
+pip install -e .
+
+# 2. Run CLI in single query mode
+python submission_package/agent.py --question "What is Ohm's law?" --json
+
+# 3. Run CLI in interactive chat mode
+python submission_package/agent.py --interactive
+
+# 4. Run the full pytest test suite
+pytest
+
+# 5. Run the Streamlit web application
+streamlit run submission_package/capstone_streamlit.py
 ```
 
-## Optional LLM setup
+---
 
-The project runs offline with a deterministic fallback. To use a hosted LLM, set either `OPENAI_API_KEY` or `GROQ_API_KEY` in your environment or a local `.env`.
+## ⚙️ Optional Environment Configuration
 
-## Submission files covered
+By default, the assistant runs in offline-deterministic mode. To connect hosted LLMs, export your API keys:
 
-- `agent.py`
-- `capstone_streamlit.py`
-- `day13_capstone.ipynb`
-- `report/project_documentation.md`
+```bash
+export OPENAI_API_KEY="your-openai-api-key"
+# OR
+export GROQ_API_KEY="your-groq-api-key"
+```
 
+---
+
+## 🧪 Testing & Quality Assurance
+
+Run the test suite to verify graph nodes, memory persistence, tool routes, red-team prompt injections, and vector search:
+
+```bash
+python submission_package/run_capstone_tests.py
+```
+
+---
+
+## 📄 Key Project Files
+
+- `submission_package/agent.py`: Command line interface with interactive chat & JSON flags.
+- `submission_package/capstone_streamlit.py`: Browser-based Streamlit web application.
+- `submission_package/physics_study_buddy/`: Core agent library modules (`agent_core.py`, `knowledge_base.py`, `llm.py`, `tools.py`).
+- `submission_package/tests/test_capstone.py`: Comprehensive Pytest suite (10/10 tests passing).
+- `submission_package/report/generate_final_report.py`: Automated ReportLab PDF generator script.
+- `submission_package/report/project_documentation.md`: Detailed capstone documentation.
