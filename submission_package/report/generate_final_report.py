@@ -18,12 +18,15 @@ SCREENSHOTS = ROOT / "screenshots"
 
 
 def register_fonts() -> str:
-    arial_path = Path(r"C:\Windows\Fonts\arial.ttf")
-    arial_bold_path = Path(r"C:\Windows\Fonts\arialbd.ttf")
-    if arial_path.exists() and arial_bold_path.exists():
-        pdfmetrics.registerFont(TTFont("Arial", str(arial_path)))
-        pdfmetrics.registerFont(TTFont("Arial-Bold", str(arial_bold_path)))
-        return "Arial"
+    try:
+        arial_path = Path(r"C:\Windows\Fonts\arial.ttf")
+        arial_bold_path = Path(r"C:\Windows\Fonts\arialbd.ttf")
+        if arial_path.exists() and arial_bold_path.exists():
+            pdfmetrics.registerFont(TTFont("Arial", str(arial_path)))
+            pdfmetrics.registerFont(TTFont("Arial-Bold", str(arial_bold_path)))
+            return "Arial"
+    except Exception:
+        pass
     return "Helvetica"
 
 
