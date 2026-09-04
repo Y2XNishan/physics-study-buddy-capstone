@@ -38,3 +38,15 @@ def test_calculator_math_functions_and_division_by_zero():
     res_ovf = calculate_expression("Calculate 10 ** 1000")
     assert "overflow" in res_ovf or "error" in res_ovf
 
+
+def test_datetime_tool_word_boundary_matching():
+    from physics_study_buddy.tools import choose_tool
+
+    # Physics query with 'time period' should NOT trigger datetime tool
+    res_shm = choose_tool("What is the time period of a simple pendulum?")
+    assert "Current date" not in res_shm
+
+    # Actual date/time queries SHOULD trigger datetime tool
+    res_date = choose_tool("What is today's date?")
+    assert "Current date" in res_date
+
