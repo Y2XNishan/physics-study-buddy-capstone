@@ -153,6 +153,20 @@ PHYSICS_TERMS = {
     "superposition",
     "interference",
     "diffraction",
+    "ray",
+    "focal",
+    "focus",
+    "spectrum",
+    "light",
+    "photon",
+    "joule",
+    "watt",
+    "volt",
+    "ampere",
+    "pascal",
+    "kelvin",
+    "hertz",
+    "planck",
 }
 
 
