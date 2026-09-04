@@ -78,19 +78,28 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 prompt = st.chat_input("Ask your physics question")
+if "preset_query" in st.session_state and st.session_state.preset_query:
+    prompt = st.session_state.pop("preset_query")
+
 if prompt:
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     result = agent.ask(prompt, st.session_state.thread_id)
-    answer = result.get("answer", "I could not produce an answer.")
-    meta = (
-        f"\n\nRoute: `{result.get('route', 'unknown')}`"
-        f" | Faithfulness: `{result.get('faithfulness', 0.0)}`"
-    )
-    full_answer = answer + meta
-    st.session_state.messages.append({"role": "assistant", "content": full_answer})
+    raw_answer = result.get("answer", "I could not produce an answer.")
+    formatted_answer = format_physics_formulas(raw_answer)
+    route_name = result.get("route", "unknown")
+    faithfulness_score = result.get("faithfulness", 0.0)
+    sources = result.get("sources", [])
+
+    full_response = formatted_answer
+    st.session_state.messages.append({"role": "assistant", "content": full_response, "route": route_name, "faithfulness": faithfulness_score, "sources": sources})
     with st.chat_message("assistant"):
-        st.markdown(full_answer)
+        st.markdown(full_response)
+        st.caption(f"Route: `{route_name}` | Faithfulness Score: `{faithfulness_score:.2f}`")
+        if sources:
+            with st.expander("📚 View Grounded Sources"):
+                for src in sources:
+                    st.write(f"- **{src.get('topic', 'Topic')}** (distance: {src.get('distance', 0.0)})")
 
