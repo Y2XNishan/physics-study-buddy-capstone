@@ -62,6 +62,10 @@ def calculate_expression(question: str) -> str:
             return "Calculator tool could not find a valid arithmetic expression."
         value = _safe_eval(ast.parse(expression, mode="eval").body)
         return f"Calculator result: {expression.replace('**', '^')} = {value:.4f}"
+    except ZeroDivisionError:
+        return "Calculator tool error: Division by zero is undefined."
+    except OverflowError:
+        return "Calculator tool error: Numerical result out of range (overflow)."
     except Exception as exc:
         return f"Calculator tool error: {exc}"
 
