@@ -102,11 +102,10 @@ def main() -> None:
     print(f"Turn 3: {turn_3.get('answer')}")
     print()
 
-    print("=== Baseline evaluation ===")
-    baseline_rows = manual_baseline(agent)
-    print(f"Average faithfulness: {round(mean(row['faithfulness'] for row in baseline_rows), 2)}")
-    print(f"Average answer relevancy: {round(mean(row['answer_relevancy'] for row in baseline_rows), 2)}")
-    print(f"Average context precision: {round(mean(row['context_precision'] for row in baseline_rows), 2)}")
+    print("=== Pytest Suite Execution ===")
+    import pytest
+    exit_code = pytest.main(["-v", "submission_package/tests"])
+    print(f"Pytest Exit Code: {exit_code}")
 
 
 if __name__ == "__main__":
