@@ -52,9 +52,11 @@ with st.sidebar:
     st.subheader("Topics Covered")
     for topic in agent.knowledge_base.topics:
         st.write(f"- {topic}")
-    st.subheader("Runtime")
-    st.write(f"LLM backend: `{agent.llm_backend.provider}`")
-    st.write(f"Embedding backend: `{agent.knowledge_base.embedder_name}`")
+    st.subheader("Runtime Status")
+    st.write(f"**LLM Backend:** `{agent.llm_backend.provider}`")
+    st.write(f"**Embedder:** `{agent.knowledge_base.embedder_name}`")
+    st.write(f"**Session Thread:** `{st.session_state.get('thread_id', '')[:18]}...`")
+    
     if st.button("New conversation", use_container_width=True):
         reset_conversation()
         st.rerun()
