@@ -18,5 +18,8 @@ dependencies = [
     "pytest"
 ]
 
+[project.scripts]
+physics-buddy = "agent:main"
+
 [tool.setuptools.packages.find]
 where = ["submission_package"]
