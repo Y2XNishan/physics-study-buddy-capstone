@@ -67,6 +67,8 @@ def calculate_expression(question: str) -> str:
         return "Calculator tool error: Division by zero is undefined."
     except OverflowError:
         return "Calculator tool error: Numerical result out of range (overflow)."
+    except ValueError as exc:
+        return f"Calculator tool error: {exc}"
     except Exception as exc:
         return f"Calculator tool error: {exc}"
 
