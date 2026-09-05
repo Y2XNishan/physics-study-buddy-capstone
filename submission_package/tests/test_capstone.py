@@ -30,9 +30,19 @@ def test_calculator_math_functions_and_division_by_zero():
     res_sqrt = calculate_expression("Calculate sqrt(16) + 5")
     assert "9.0000" in res_sqrt
 
+    # Test modulo and floor division
+    res_mod = calculate_expression("Calculate 17 % 5")
+    assert "2.0000" in res_mod
+    res_fdiv = calculate_expression("Calculate 17 // 5")
+    assert "3.0000" in res_fdiv
+
     # Test division by zero
     res_zero = calculate_expression("Calculate 10 / 0")
     assert "Division by zero is undefined" in res_zero
+
+    # Test domain error
+    res_dom = calculate_expression("Calculate sqrt(-1)")
+    assert "error" in res_dom.lower()
 
     # Test overflow
     res_ovf = calculate_expression("Calculate 10 ** 1000")
