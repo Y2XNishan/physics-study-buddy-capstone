@@ -255,11 +255,14 @@ class KnowledgeBase:
     docs: list[dict]
     embedder_name: str
 
-    def query(self, question: str, top_k: int = 3) -> dict:
+    def query(self, question: str, top_k: int = 3, category: str | None = None) -> dict:
+        """Query knowledge base for top matching documents with optional category filtering."""
         query_embedding = self.embedder.encode([question])[0]
+        where_filter = {"category": category} if category else None
         result = self.collection.query(
             query_embeddings=[query_embedding],
             n_results=top_k,
+            where=where_filter,
             include=["documents", "metadatas", "distances"],
         )
         docs = result.get("documents", [[]])[0]
@@ -329,7 +332,7 @@ def build_knowledge_base() -> KnowledgeBase:
     collection.add(
         ids=[doc["id"] for doc in PHYSICS_DOCS],
         documents=texts,
-        metadatas=[{"topic": doc["topic"]} for doc in PHYSICS_DOCS],
+        metadatas=[{"topic": doc["topic"], "category": doc.get("category", "General Physics")} for doc in PHYSICS_DOCS],
         embeddings=embeddings if isinstance(embeddings, list) else np.array(embeddings).tolist(),
     )
     return KnowledgeBase(
