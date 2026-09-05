@@ -73,7 +73,7 @@ def _extract_name(question: str) -> str:
     return ""
 
 
-def build_agent() -> PhysicsStudyBuddyAgent:
+def build_agent(max_messages_window: int = 6) -> PhysicsStudyBuddyAgent:
     knowledge_base = build_knowledge_base()
     llm_backend = LLMBackend.from_environment()
 
@@ -85,7 +85,7 @@ def build_agent() -> PhysicsStudyBuddyAgent:
         if extracted_name:
             user_name = extracted_name
         return {
-            "messages": messages[-6:],
+            "messages": messages[-max_messages_window:],
             "user_name": user_name,
         }
 
@@ -151,7 +151,7 @@ def build_agent() -> PhysicsStudyBuddyAgent:
         messages = list(state.get("messages", []))
         messages.append({"role": "assistant", "content": state.get("answer", "")})
         logger.info("[TRACE] save_node -> persisted answer")
-        return {"messages": messages[-6:]}
+        return {"messages": messages[-max_messages_window:]}
 
     def route_decision(state: CapstoneState) -> str:
         return state.get("route", "retrieve")
