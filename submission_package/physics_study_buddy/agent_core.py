@@ -54,6 +54,17 @@ class PhysicsStudyBuddyAgent:
         except Exception as exc:
             logger.warning("Could not clear thread %s: %s", thread_id, exc)
 
+    def get_thread_history(self, thread_id: str) -> list[dict[str, str]]:
+        """Retrieve stored message history for a given thread_id."""
+        try:
+            config = {"configurable": {"thread_id": thread_id}}
+            snapshot = self.app.get_state(config)
+            if snapshot and snapshot.values:
+                return snapshot.values.get("messages", [])
+        except Exception as exc:
+            logger.warning("Could not fetch history for %s: %s", thread_id, exc)
+        return []
+
 
 def _extract_name(question: str) -> str:
     patterns = [
