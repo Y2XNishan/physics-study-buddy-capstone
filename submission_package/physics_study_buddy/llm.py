@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import logging
 import os
 import re
 from dataclasses import dataclass
 from typing import Any
+
+logger = logging.getLogger("physics_study_buddy")
 
 from groq import Groq
 from openai import OpenAI
