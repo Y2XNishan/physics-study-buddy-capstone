@@ -13,6 +13,7 @@ def main() -> None:
     parser.add_argument("--interactive", action="store_true", help="Run in interactive chat mode")
     parser.add_argument("--json", action="store_true", help="Output result as formatted JSON")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose debug logging")
+    parser.add_argument("--version", action="version", version="Physics Study Buddy v1.0.0")
     args = parser.parse_args()
 
     if args.verbose:
