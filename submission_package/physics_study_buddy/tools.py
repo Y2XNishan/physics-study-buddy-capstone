@@ -53,6 +53,7 @@ def _safe_eval(node: ast.AST) -> float:
 
 
 def calculate_expression(question: str) -> str:
+    """Safely extract and evaluate a mathematical expression from the question string."""
     try:
         # Strip common action keywords first
         cleaned = re.sub(r"(?i)^(calculate|solve|compute|what is|find)\s+", "", question.strip())
@@ -76,11 +77,13 @@ def calculate_expression(question: str) -> str:
 
 
 def current_datetime_tool() -> str:
+    """Return current system date and time formatted nicely."""
     now = datetime.now()
     return now.strftime("Current date and time: %A, %d %B %Y, %I:%M %p")
 
 
 def choose_tool(question: str) -> str:
+    """Disambiguate query intent and dispatch to date/time or calculator tool."""
     lowered = question.lower()
     if re.search(r"\b(date|today|clock)\b", lowered):
         return current_datetime_tool()
