@@ -237,6 +237,7 @@ class LLMBackend:
 
     @classmethod
     def from_environment(cls) -> "LLMBackend":
+        """Instantiate LLM backend from environment API keys or offline fallback."""
         openai_key = os.getenv("OPENAI_API_KEY")
         groq_key = os.getenv("GROQ_API_KEY")
         if openai_key:
@@ -254,6 +255,7 @@ class LLMBackend:
         return cls(provider="offline", model_name="deterministic-fallback")
 
     def route(self, question: str, messages: list[dict[str, str]]) -> str:
+        """Route input question to retrieve, tool, or skip nodes."""
         if self.provider == "offline":
             return self._offline_route(question)
 
