@@ -37,6 +37,7 @@ PHYSICS_DOCS = [
     {
         "id": "doc_002",
         "topic": "Newton's Laws of Motion",
+        "category": "Mechanics",
         "text": (
             "Newton's first law says that a body remains at rest or in uniform straight-line "
             "motion unless acted on by an external unbalanced force. This defines inertia. "
@@ -54,6 +55,7 @@ PHYSICS_DOCS = [
     {
         "id": "doc_003",
         "topic": "Work, Energy, and Power",
+        "category": "Mechanics",
         "text": (
             "Work is done when a force causes displacement. For a constant force, work equals "
             "W = F s cos(theta), where theta is the angle between force and displacement. "
@@ -71,6 +73,7 @@ PHYSICS_DOCS = [
     {
         "id": "doc_004",
         "topic": "Gravitation",
+        "category": "Mechanics",
         "text": (
             "Newton's law of universal gravitation states that every pair of masses attracts "
             "each other with force F = Gm1m2 / r^2. The force acts along the line joining the "
@@ -87,6 +90,7 @@ PHYSICS_DOCS = [
     {
         "id": "doc_005",
         "topic": "Simple Harmonic Motion and Oscillations",
+        "category": "Waves & Oscillations",
         "text": (
             "Simple harmonic motion, or SHM, is a periodic motion in which the restoring force "
             "or acceleration is directly proportional to displacement from the mean position and "
@@ -104,6 +108,7 @@ PHYSICS_DOCS = [
     {
         "id": "doc_006",
         "topic": "Waves and Sound",
+        "category": "Waves & Oscillations",
         "text": (
             "A wave transfers energy without transferring matter permanently from one place to "
             "another. Mechanical waves require a medium, while electromagnetic waves do not. "
@@ -122,6 +127,7 @@ PHYSICS_DOCS = [
     {
         "id": "doc_007",
         "topic": "Ray Optics",
+        "category": "Optics",
         "text": (
             "Ray optics treats light as straight-line rays and explains image formation using "
             "reflection and refraction. The laws of reflection state that the angle of incidence "
@@ -139,6 +145,7 @@ PHYSICS_DOCS = [
     {
         "id": "doc_008",
         "topic": "Electrostatics and Electric Field",
+        "category": "Electromagnetism",
         "text": (
             "Electrostatics deals with charges at rest. Like charges repel and unlike charges "
             "attract. Coulomb's law gives the magnitude of the force between two point charges as "
@@ -155,6 +162,7 @@ PHYSICS_DOCS = [
     {
         "id": "doc_009",
         "topic": "Current Electricity",
+        "category": "Electromagnetism",
         "text": (
             "Current electricity studies the motion of charges in conductors. Electric current is "
             "the rate of flow of charge, I = Q / t. Potential difference is the work done per "
@@ -172,6 +180,7 @@ PHYSICS_DOCS = [
     {
         "id": "doc_010",
         "topic": "Magnetism and Electromagnetic Induction",
+        "category": "Electromagnetism",
         "text": (
             "A moving charge or current produces a magnetic field. A current-carrying conductor "
             "placed in a magnetic field may experience a force. The direction is often found with "
@@ -188,6 +197,7 @@ PHYSICS_DOCS = [
     {
         "id": "doc_011",
         "topic": "Thermodynamics and Heat",
+        "category": "Thermodynamics",
         "text": (
             "Thermodynamics studies heat, work, temperature, and energy transfer. Temperature "
             "measures thermal state, while heat is energy transferred because of a temperature "
@@ -205,6 +215,7 @@ PHYSICS_DOCS = [
     {
         "id": "doc_012",
         "topic": "Modern Physics and Semiconductors",
+        "category": "Modern Physics",
         "text": (
             "Modern physics includes quantum ideas, atomic structure, nuclei, and semiconductor "
             "devices. The photoelectric effect showed that light can behave like packets of energy "
@@ -279,6 +290,15 @@ class KnowledgeBase:
             if topic_name.lower() in doc["topic"].lower():
                 return doc
         return None
+
+    def get_all_categories(self) -> list[str]:
+        """Return list of unique topic categories in the knowledge base."""
+        categories = []
+        for doc in self.docs:
+            cat = doc.get("category", "General Physics")
+            if cat not in categories:
+                categories.append(cat)
+        return categories
 
 
 import logging
