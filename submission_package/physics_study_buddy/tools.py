@@ -27,6 +27,8 @@ SAFE_FUNCTIONS = {
     "log": math.log,
     "exp": math.exp,
     "abs": abs,
+    "radians": math.radians,
+    "degrees": math.degrees,
 }
 
 SAFE_CONSTANTS = {
