@@ -60,6 +60,10 @@ with st.sidebar:
         "It answers from a grounded physics knowledge base, remembers thread context, "
         "uses tools for date/time and arithmetic, and evaluates answer faithfulness."
     )
+    st.subheader("Filter Knowledge Base")
+    categories = ["All Categories"] + agent.knowledge_base.get_all_categories()
+    selected_category = st.selectbox("Topic Category", categories)
+
     st.subheader("Quick Presets")
     preset_col1, preset_col2 = st.columns(2)
     with preset_col1:
