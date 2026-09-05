@@ -218,6 +218,8 @@ def _top_sentences(question: str, retrieved: str, limit: int = 4) -> list[str]:
             score += 1
         if any(term in sentence_terms for term in question_terms):
             score += 1
+        if question.lower().strip() in sentence.lower():
+            score += 2
         scored.append((score, sentence))
     ranked = [sentence for score, sentence in sorted(scored, reverse=True) if score >= 1]
     unique = []
