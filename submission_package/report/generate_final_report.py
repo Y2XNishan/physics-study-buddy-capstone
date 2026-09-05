@@ -101,13 +101,18 @@ def page_number(canvas, doc):
     canvas.restoreState()
 
 
-def fit_image(path: Path, max_width: float, max_height: float) -> Image:
-    image = Image(str(path))
-    width, height = image.imageWidth, image.imageHeight
-    scale = min(max_width / width, max_height / height)
-    image.drawWidth = width * scale
-    image.drawHeight = height * scale
-    return image
+def fit_image(path: Path, max_width: float, max_height: float) -> Image | Paragraph:
+    try:
+        if path.exists():
+            image = Image(str(path))
+            width, height = image.imageWidth, image.imageHeight
+            scale = min(max_width / width, max_height / height)
+            image.drawWidth = width * scale
+            image.drawHeight = height * scale
+            return image
+    except Exception:
+        pass
+    return Paragraph(f"<i>[Image unavailable: {path.name}]</i>", getSampleStyleSheet()["Normal"])
 
 
 def section(title: str, styles) -> list:
