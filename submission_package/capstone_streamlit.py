@@ -12,6 +12,8 @@ def format_physics_formulas(text: str) -> str:
         (r"\bE\s*=\s*mc\^2\b", r"$E = mc^2$"),
         (r"\b1/2\s*mv\^2\b", r"$\\frac{1}{2}mv^2$"),
         (r"\bmgh\b", r"$mgh$"),
+        (r"\bv\s*=\s*f\s*lambda\b", r"$v = f \lambda$"),
+        (r"\bn1\s*sin\(theta1\)\s*=\s*n2\s*sin\(theta2\)", r"$n_1 \sin\theta_1 = n_2 \sin\theta_2$"),
     ]
     formatted = text
     for pattern, replacement in formulas:
