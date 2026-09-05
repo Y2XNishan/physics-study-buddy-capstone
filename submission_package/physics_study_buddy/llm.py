@@ -185,6 +185,10 @@ REFUSAL_PATTERNS = [
     "developer message",
     "override system prompt",
     "bypass safety",
+    "dan mode",
+    "jailbreak",
+    "act as dan",
+    "ignore safety",
 ]
 
 
