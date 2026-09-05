@@ -310,6 +310,7 @@ logger = logging.getLogger("physics_study_buddy")
 
 
 def _build_embedder(texts: list[str]) -> tuple[object, str]:
+    """Attempt loading SentenceTransformer embedder, fallback to TfidfEmbedder if unavailable."""
     if SentenceTransformer is not None:
         try:
             embedder = SentenceTransformer("all-MiniLM-L6-v2", local_files_only=True)
@@ -323,6 +324,7 @@ def _build_embedder(texts: list[str]) -> tuple[object, str]:
 
 
 def build_knowledge_base() -> KnowledgeBase:
+    """Build and initialize ChromaDB vector store populated with physics documents."""
     texts = [doc["text"] for doc in PHYSICS_DOCS]
     embedder, embedder_name = _build_embedder(texts)
     embeddings = embedder.encode(texts)
