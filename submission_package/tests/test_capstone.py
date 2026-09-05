@@ -135,3 +135,18 @@ def test_knowledge_base_get_doc_by_topic():
     doc_none = kb.get_doc_by_topic("Nonexistent Category Topic 999")
     assert doc_none is None
 
+
+def test_knowledge_base_categories():
+    agent = build_agent()
+    kb = agent.knowledge_base
+
+    categories = kb.get_all_categories()
+    assert "Mechanics" in categories
+    assert "Optics" in categories
+    assert "Thermodynamics" in categories
+
+    res_mech = kb.query("motion", top_k=2, category="Mechanics")
+    assert len(res_mech["sources"]) > 0
+    for src in res_mech["sources"]:
+        assert src["topic"] in ["Kinematics and Motion in One Dimension", "Newton's Laws of Motion", "Work, Energy, and Power", "Gravitation"]
+
