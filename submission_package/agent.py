@@ -37,7 +37,7 @@ def main() -> None:
                 print(f"\nAssistant: {result.get('answer', '')}")
                 print(f"[Route: {result.get('route')} | Faithfulness: {result.get('faithfulness')}]\n")
             except (KeyboardInterrupt, EOFError):
-                print("\nGoodbye!")
+                print("\n[Exiting chat session. Goodbye!]")
                 break
         return
 
