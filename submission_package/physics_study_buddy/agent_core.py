@@ -89,6 +89,7 @@ def build_agent(max_messages_window: int = 6) -> PhysicsStudyBuddyAgent:
     llm_backend = LLMBackend.from_environment()
 
     def memory_node(state: CapstoneState) -> CapstoneState:
+        """Process conversation history and extract user name if introduced."""
         messages = list(state.get("messages", []))
         messages.append({"role": "user", "content": state.get("question", "")})
         user_name = state.get("user_name", "")
@@ -101,11 +102,13 @@ def build_agent(max_messages_window: int = 6) -> PhysicsStudyBuddyAgent:
         }
 
     def router_node(state: CapstoneState) -> CapstoneState:
+        """Classify input intent to determine execution branch (retrieve, tool, or skip)."""
         route = llm_backend.route(state.get("question", ""), state.get("messages", []))
         logger.info("[TRACE] router_node -> route=%s", route)
         return {"route": route}
 
     def retrieval_node(state: CapstoneState) -> CapstoneState:
+        """Perform vector search against physics knowledge base for relevant concepts."""
         result = knowledge_base.query(state.get("question", ""), top_k=3)
         topics = ", ".join(source["topic"] for source in result["sources"])
         logger.info("[TRACE] retrieval_node -> topics=%s", topics)
