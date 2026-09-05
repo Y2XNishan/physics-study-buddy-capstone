@@ -229,8 +229,11 @@ class TfidfEmbedder:
         self.vectorizer.fit(list(texts))
 
     def encode(self, texts: Iterable[str]) -> list[list[float]]:
-        matrix = self.vectorizer.transform(list(texts))
-        return matrix.toarray().astype(float).tolist()
+        matrix = self.vectorizer.transform(list(texts)).toarray().astype(float)
+        norms = np.linalg.norm(matrix, axis=1, keepdims=True)
+        norms[norms == 0] = 1.0
+        normalized = matrix / norms
+        return normalized.tolist()
 
 
 @dataclass
