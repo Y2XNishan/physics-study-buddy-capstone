@@ -73,6 +73,18 @@ with st.sidebar:
         for cat, count in stats.items():
             st.write(f"- **{cat}**: {count} topics")
 
+    with st.expander("🔍 Direct Keyword Search"):
+        kw_query = st.text_input("Search term", key="kw_search_input")
+        if kw_query:
+            matches = agent.knowledge_base.search_by_keyword(kw_query)
+            if matches:
+                st.write(f"Found **{len(matches)}** matching topic(s):")
+                for m in matches:
+                    st.markdown(f"- **{m['topic']}** (`{m['category']}`)")
+            else:
+                st.write("No matching documents found.")
+
+
 
     st.subheader("Formula Quick Reference")
     with st.expander("⚡ Core Physics Formulas"):
