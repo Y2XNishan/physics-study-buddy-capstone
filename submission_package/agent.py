@@ -14,8 +14,9 @@ def main() -> None:
     parser.add_argument("--json", action="store_true", help="Output result as formatted JSON")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose debug logging")
     parser.add_argument("--top-k", type=int, default=3, help="Top K documents to retrieve (default: 3)")
-    parser.add_argument("--version", action="version", version="Physics Study Buddy v1.0.0")
+    parser.add_argument("--version", "-v", action="version", version="Physics Study Buddy Agent v1.0.0 (Capstone Submission)")
     args = parser.parse_args()
+
 
     if args.verbose:
         import logging
