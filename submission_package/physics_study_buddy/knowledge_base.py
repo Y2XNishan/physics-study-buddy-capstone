@@ -256,13 +256,17 @@ class TfidfEmbedder:
 
 
 
+from typing import Any, Iterable
+
+
 @dataclass
 class KnowledgeBase:
-    collection: object
-    embedder: object
+    collection: Any
+    embedder: Any
     topics: list[str]
-    docs: list[dict]
+    docs: list[dict[str, Any]]
     embedder_name: str
+
 
     def query(self, question: str, top_k: int = 3, category: str | None = None) -> dict:
         """Query knowledge base for top matching documents with optional category filtering."""
