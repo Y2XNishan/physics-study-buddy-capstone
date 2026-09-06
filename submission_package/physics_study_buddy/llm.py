@@ -404,17 +404,23 @@ class LLMBackend:
     def _chat(self, messages: list[dict[str, str]]) -> str:
         if self.client is None:
             return ""
-        try:
-            logger.debug("Dispatching chat completion request to model=%s", self.model_name)
-            response = self.client.chat.completions.create(
-                model=self.model_name,
-                messages=messages,
-                temperature=0.2,
-            )
-            return response.choices[0].message.content or ""
-        except Exception as exc:
-            logger.error("API call failed for model=%s: %s", self.model_name, exc)
-            return ""
+        max_attempts = 3
+        for attempt in range(max_attempts):
+            try:
+                logger.debug("Dispatching chat completion request (attempt %d/%d) to model=%s", attempt + 1, max_attempts, self.model_name)
+                response = self.client.chat.completions.create(
+                    model=self.model_name,
+                    messages=messages,
+                    temperature=0.2,
+                )
+                return response.choices[0].message.content or ""
+            except Exception as exc:
+                logger.warning("API call attempt %d failed for model=%s: %s", attempt + 1, self.model_name, exc)
+                if attempt == max_attempts - 1:
+                    logger.error("All %d API call attempts failed for model=%s", max_attempts, self.model_name)
+                    return ""
+        return ""
+
 
 
     def _offline_route(self, question: str) -> str:
