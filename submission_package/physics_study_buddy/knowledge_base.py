@@ -304,13 +304,21 @@ class KnowledgeBase:
         return None
 
     def get_all_categories(self) -> list[str]:
-        """Return list of unique topic categories in the knowledge base."""
-        categories = []
+        """Return sorted list of unique topic categories in the knowledge base."""
+        categories = set()
         for doc in self.docs:
             cat = doc.get("category", "General Physics")
-            if cat not in categories:
-                categories.append(cat)
-        return categories
+            categories.add(cat)
+        return sorted(list(categories))
+
+    def get_category_stats(self) -> dict[str, int]:
+        """Return a mapping of topic categories to their document counts."""
+        stats: dict[str, int] = {}
+        for doc in self.docs:
+            cat = doc.get("category", "General Physics")
+            stats[cat] = stats.get(cat, 0) + 1
+        return stats
+
 
 
 import logging
