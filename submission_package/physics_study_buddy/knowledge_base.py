@@ -271,8 +271,10 @@ class KnowledgeBase:
 
     def query(self, question: str, top_k: int = 3, category: str | None = None) -> dict:
         """Query knowledge base for top matching documents with optional category filtering."""
-        query_embedding = self.embedder.encode([question])[0]
+        clean_q = re.sub(r"\s+", " ", question.strip())
+        query_embedding = self.embedder.encode([clean_q])[0]
         where_filter = {"category": category} if category and category != "All" else None
+
         result = self.collection.query(
             query_embeddings=[query_embedding],
             n_results=top_k,
