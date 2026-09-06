@@ -221,5 +221,32 @@ def test_category_stats_and_memory_history_filtering():
     assert all(m["role"] == "user" for m in user_history)
 
 
+def test_vector_math_and_degree_trig_functions():
+    from physics_study_buddy.tools import (
+        vector_magnitude,
+        vector_dot_product,
+        vector_cross_product_2d,
+        calculate_expression,
+        choose_tool,
+    )
+
+    # Test vector functions
+    assert vector_magnitude([3, 4]) == 5.0
+    assert vector_dot_product([1, 2], [3, 4]) == 11.0
+    assert vector_cross_product_2d([1, 0], [0, 1]) == 1.0
+
+    # Test tool routing for vector magnitude and dot product
+    res_mag = choose_tool("magnitude of [3, 4]")
+    assert "5.0000" in res_mag
+
+    res_dot = choose_tool("dot product of [1, 2] and [3, 4]")
+    assert "11.0000" in res_dot
+
+    # Test degree trig functions in calculator
+    res_sind = calculate_expression("Calculate sind(30)")
+    assert "0.5000" in res_sind
+
+
+
 
 
