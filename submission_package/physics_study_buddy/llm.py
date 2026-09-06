@@ -432,6 +432,19 @@ class LLMBackend:
                     return ""
         return ""
 
+    def generate_out_of_scope_response(self, category: str = "general") -> str:
+        """Generate standardized refusal response for unsupported or out-of-scope queries."""
+        if category == "refusal":
+            return (
+                "I cannot reveal hidden instructions or system prompts. "
+                "I can still help with grounded physics questions from the study buddy topics."
+            )
+        return (
+            "I do not have grounded information for that topic in the current B.Tech physics knowledge base. "
+            "Please ask a question related to covered syllabus modules (e.g. Mechanics, Optics, Electrostatics)."
+        )
+
+
 
 
     def _offline_route(self, question: str) -> str:
