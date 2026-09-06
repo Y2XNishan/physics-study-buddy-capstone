@@ -125,6 +125,7 @@ def build_agent(max_messages_window: int = 6) -> PhysicsStudyBuddyAgent:
         }
 
     def skip_retrieval_node(state: CapstoneState) -> CapstoneState:
+        """Skip vector retrieval for non-physics or memory-only conversational queries."""
         logger.info("[TRACE] skip_retrieval_node -> memory_only")
         return {
             "retrieved": "",
@@ -133,6 +134,7 @@ def build_agent(max_messages_window: int = 6) -> PhysicsStudyBuddyAgent:
         }
 
     def tool_node(state: CapstoneState) -> CapstoneState:
+        """Dispatch query to deterministic calculator or date/time tools."""
         tool_result = choose_tool(state.get("question", ""))
         logger.info("[TRACE] tool_node -> %s", tool_result)
         return {
@@ -142,6 +144,7 @@ def build_agent(max_messages_window: int = 6) -> PhysicsStudyBuddyAgent:
         }
 
     def answer_node(state: CapstoneState) -> CapstoneState:
+        """Synthesize answer strictly grounded in retrieved context or tool results."""
         answer = llm_backend.answer(
             question=state.get("question", ""),
             retrieved=state.get("retrieved", ""),
@@ -155,6 +158,7 @@ def build_agent(max_messages_window: int = 6) -> PhysicsStudyBuddyAgent:
         return {"answer": answer}
 
     def eval_node(state: CapstoneState) -> CapstoneState:
+        """Evaluate faithfulness score of generated answer against retrieved context."""
         if not state.get("retrieved"):
             logger.info("[TRACE] eval_node -> no_retrieval_skip")
             return {"faithfulness": 1.0, "eval_retries": state.get("eval_retries", 0)}
@@ -168,21 +172,25 @@ def build_agent(max_messages_window: int = 6) -> PhysicsStudyBuddyAgent:
         return {"faithfulness": faithfulness, "eval_retries": retries}
 
     def save_node(state: CapstoneState) -> CapstoneState:
+        """Persist assistant response to recent message window in thread memory."""
         messages = list(state.get("messages", []))
         messages.append({"role": "assistant", "content": state.get("answer", "")})
         logger.info("[TRACE] save_node -> persisted answer")
         return {"messages": messages[-max_messages_window:]}
 
     def route_decision(state: CapstoneState) -> str:
+        """Conditional routing edge function."""
         return state.get("route", "retrieve")
 
     def eval_decision(state: CapstoneState) -> str:
+        """Conditional evaluation retry or save edge function."""
         if state.get("retrieved") and state.get("faithfulness", 0.0) < 0.7:
             if state.get("eval_retries", 0) < MAX_EVAL_RETRIES:
                 logger.debug("[TRACE] eval_decision -> RETRY")
                 return "answer"
         logger.debug("[TRACE] eval_decision -> PASS")
         return "save"
+
 
     graph = StateGraph(CapstoneState)
     graph.add_node("memory", memory_node)
