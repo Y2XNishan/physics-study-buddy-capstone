@@ -129,15 +129,18 @@ def build_agent(max_messages_window: int = 6, top_k: int = 3) -> PhysicsStudyBud
 
     def retrieval_node(state: CapstoneState) -> CapstoneState:
         """Perform vector search against physics knowledge base for relevant concepts."""
-        result = knowledge_base.query(state.get("question", ""), top_k=top_k)
-        topics = ", ".join(source["topic"] for source in result["sources"])
-        logger.info("[TRACE] retrieval_node -> topics=%s", topics)
-        return {
-            "retrieved": result["retrieved"],
-            "sources": result["sources"],
-            "tool_result": "",
-        }
-
+        try:
+            result = knowledge_base.query(state.get("question", ""), top_k=top_k)
+            topics = ", ".join(source["topic"] for source in result["sources"])
+            logger.info("[TRACE] retrieval_node -> topics=%s", topics)
+            return {
+                "retrieved": result["retrieved"],
+                "sources": result["sources"],
+                "tool_result": "",
+            }
+        except Exception as exc:
+            logger.error("[TRACE] retrieval_node error: %s", exc)
+            return {"retrieved": "", "sources": [], "tool_result": ""}
 
     def skip_retrieval_node(state: CapstoneState) -> CapstoneState:
         """Skip vector retrieval for non-physics or memory-only conversational queries."""
@@ -160,17 +163,22 @@ def build_agent(max_messages_window: int = 6, top_k: int = 3) -> PhysicsStudyBud
 
     def answer_node(state: CapstoneState) -> CapstoneState:
         """Synthesize answer strictly grounded in retrieved context or tool results."""
-        answer = llm_backend.answer(
-            question=state.get("question", ""),
-            retrieved=state.get("retrieved", ""),
-            tool_result=state.get("tool_result", ""),
-            messages=state.get("messages", []),
-            eval_retries=state.get("eval_retries", 0),
-            user_name=state.get("user_name", ""),
-            sources=state.get("sources", []),
-        )
-        logger.info("[TRACE] answer_node -> answer_length=%d", len(answer))
-        return {"answer": answer}
+        try:
+            answer = llm_backend.answer(
+                question=state.get("question", ""),
+                retrieved=state.get("retrieved", ""),
+                tool_result=state.get("tool_result", ""),
+                messages=state.get("messages", []),
+                eval_retries=state.get("eval_retries", 0),
+                user_name=state.get("user_name", ""),
+                sources=state.get("sources", []),
+            )
+            logger.info("[TRACE] answer_node -> answer_length=%d", len(answer))
+            return {"answer": answer}
+        except Exception as exc:
+            logger.error("[TRACE] answer_node error: %s", exc)
+            return {"answer": "An error occurred while generating an answer. Please try again."}
+
 
     def eval_node(state: CapstoneState) -> CapstoneState:
         """Evaluate faithfulness score of generated answer against retrieved context."""
