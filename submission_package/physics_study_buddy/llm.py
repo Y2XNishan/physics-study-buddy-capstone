@@ -13,7 +13,9 @@ from openai import OpenAI
 
 
 def _normalize(text: str) -> set[str]:
+    """Extract lowercase alphanumeric token set from text string."""
     return set(re.findall(r"[a-zA-Z0-9_]+", text.lower()))
+
 
 
 GENERIC_TERMS = {
@@ -238,7 +240,9 @@ def check_input_safety(question: str) -> tuple[bool, str]:
 
 
 def _top_sentences(question: str, retrieved: str, limit: int = 4) -> list[str]:
+    """Score and extract top relevant sentences from retrieved context based on question overlap."""
     question_terms = _normalize(question) - GENERIC_TERMS
+
     sentences = [
         sentence.strip()
         for sentence in re.split(r"(?<=[.!?])\s+|\n+", retrieved)
