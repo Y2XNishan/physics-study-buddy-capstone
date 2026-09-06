@@ -72,6 +72,18 @@ class PhysicsStudyBuddyAgent:
             logger.warning("Could not fetch history for %s: %s", thread_id, exc)
         return []
 
+    def get_state_snapshot(self, thread_id: str) -> dict[str, Any]:
+        """Inspect and return current values dictionary of state snapshot for thread_id."""
+        try:
+            config = {"configurable": {"thread_id": thread_id}}
+            snapshot = self.app.get_state(config)
+            if snapshot and snapshot.values:
+                return dict(snapshot.values)
+        except Exception as exc:
+            logger.warning("Could not fetch state snapshot for %s: %s", thread_id, exc)
+        return {}
+
+
 
 
 def _extract_name(question: str) -> str:
