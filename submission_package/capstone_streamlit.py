@@ -97,15 +97,28 @@ with st.sidebar:
         st.rerun()
 
     if st.session_state.messages:
-        import json
-        chat_export = json.dumps(st.session_state.messages, indent=2)
+        chat_export_json = json.dumps(st.session_state.messages, indent=2)
+        md_lines = ["# Physics Study Buddy Chat Export\n"]
+        for m in st.session_state.messages:
+            role = m.get("role", "user").capitalize()
+            md_lines.append(f"### {role}\n{m.get('content', '')}\n")
+        chat_export_md = "\n".join(md_lines)
+
         st.download_button(
-            label="📥 Export Chat History",
-            data=chat_export,
+            label="📥 Export Chat History (JSON)",
+            data=chat_export_json,
             file_name="physics_study_buddy_chat.json",
             mime="application/json",
             use_container_width=True,
         )
+        st.download_button(
+            label="📄 Export Chat History (Markdown)",
+            data=chat_export_md,
+            file_name="physics_study_buddy_chat.md",
+            mime="text/markdown",
+            use_container_width=True,
+        )
+
 
 st.title("Physics Study Buddy")
 st.caption("Ask concept questions, formulas, memory follow-ups, or simple calculations.")
