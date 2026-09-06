@@ -177,15 +177,17 @@ if prompt:
     formatted_answer = format_physics_formulas(raw_answer)
     route_name = result.get("route", "unknown")
     faithfulness_score = result.get("faithfulness", 0.0)
+    elapsed_time = result.get("elapsed_seconds", 0.0)
     sources = result.get("sources", [])
 
     full_response = formatted_answer
-    st.session_state.messages.append({"role": "assistant", "content": full_response, "route": route_name, "faithfulness": faithfulness_score, "sources": sources})
+    st.session_state.messages.append({"role": "assistant", "content": full_response, "route": route_name, "faithfulness": faithfulness_score, "sources": sources, "elapsed": elapsed_time})
     with st.chat_message("assistant"):
         st.markdown(full_response)
-        st.caption(f"Route: `{route_name}` | Faithfulness Score: `{faithfulness_score:.2f}`")
+        st.caption(f"Route: `{route_name}` | Faithfulness: `{faithfulness_score:.2f}` | Latency: `{elapsed_time:.3f}s`")
         if sources:
             with st.expander("📚 View Grounded Sources"):
                 for src in sources:
                     st.write(f"- **{src.get('topic', 'Topic')}** (distance: {src.get('distance', 0.0)})")
+
 
