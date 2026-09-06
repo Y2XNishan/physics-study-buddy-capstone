@@ -267,7 +267,7 @@ class KnowledgeBase:
     def query(self, question: str, top_k: int = 3, category: str | None = None) -> dict:
         """Query knowledge base for top matching documents with optional category filtering."""
         query_embedding = self.embedder.encode([question])[0]
-        where_filter = {"category": category} if category else None
+        where_filter = {"category": category} if category and category != "All" else None
         result = self.collection.query(
             query_embeddings=[query_embedding],
             n_results=top_k,
@@ -277,6 +277,18 @@ class KnowledgeBase:
         docs = result.get("documents", [[]])[0]
         metadatas = result.get("metadatas", [[]])[0]
         distances = result.get("distances", [[]])[0]
+
+        # Fallback if filtered category query yields no results
+        if not docs and where_filter:
+            result = self.collection.query(
+                query_embeddings=[query_embedding],
+                n_results=top_k,
+                include=["documents", "metadatas", "distances"],
+            )
+            docs = result.get("documents", [[]])[0]
+            metadatas = result.get("metadatas", [[]])[0]
+            distances = result.get("distances", [[]])[0]
+
         formatted_chunks = []
         sources = []
         for doc, metadata, distance in zip(docs, metadatas, distances):
@@ -295,6 +307,7 @@ class KnowledgeBase:
             "retrieved": "\n\n".join(formatted_chunks),
             "sources": sources,
         }
+
 
     def get_doc_by_topic(self, topic_name: str) -> dict | None:
         """Find a document in the knowledge base by matching topic name."""
