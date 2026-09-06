@@ -14,9 +14,11 @@ def main() -> None:
     parser.add_argument("--json", action="store_true", help="Output result as formatted JSON")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose debug logging")
     parser.add_argument("--top-k", type=int, default=3, help="Top K documents to retrieve (default: 3)")
+    parser.add_argument("--category", type=str, help="Filter knowledge base retrieval by category (e.g., Mechanics, Optics)")
     parser.add_argument("--export-history", type=str, help="Export conversation history JSON to specified file path")
     parser.add_argument("--version", "-v", action="version", version="Physics Study Buddy Agent v1.0.0 (Capstone Submission)")
     args = parser.parse_args()
+
 
 
 
