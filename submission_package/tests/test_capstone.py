@@ -247,6 +247,22 @@ def test_vector_math_and_degree_trig_functions():
     assert "0.5000" in res_sind
 
 
+def test_keyword_search_and_topic_summary():
+    agent = build_agent()
+    kb = agent.knowledge_base
+
+    # Search keyword
+    matches = kb.search_by_keyword("refraction")
+    assert len(matches) > 0
+    assert any("Ray Optics" in m["topic"] for m in matches)
+
+    # Topic summary
+    summary = kb.get_topic_summary("Ray Optics")
+    assert "Ray Optics" in summary
+    assert "Category" in summary
+
+
+
 
 
 
