@@ -70,14 +70,15 @@ def main() -> None:
     if args.json:
         print(json.dumps(payload, indent=2))
     else:
-        print(f"Answer: {payload['answer']}")
-        print(f"Route: {payload['route']} | Faithfulness: {payload['faithfulness']}")
+        print(f"\033[1;32mAnswer:\033[0m {payload['answer']}")
+        print(f"\033[1;34mRoute:\033[0m {payload['route']} | \033[1;34mFaithfulness:\033[0m {payload['faithfulness']}")
 
     if args.export_history:
         history = agent.get_thread_history(args.thread_id)
         with open(args.export_history, "w", encoding="utf-8") as f:
             json.dump(history, f, indent=2)
-        print(f"[Exported conversation history to '{args.export_history}']")
+        print(f"\033[36m[Exported conversation history to '{args.export_history}']\033[0m")
+
 
 
 
