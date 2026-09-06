@@ -141,8 +141,30 @@ def vector_cross_product_2d(vec_a: list[float], vec_b: list[float]) -> float:
 
 
 def choose_tool(question: str) -> str:
-    """Disambiguate query intent and dispatch to date/time, unit conversion, or calculator tool."""
+    """Disambiguate query intent and dispatch to date/time, unit conversion, vector, or calculator tool."""
     lowered = question.lower()
+    
+    # Vector magnitude query routing
+    mag_match = re.search(r"(?:magnitude|norm)\s+of\s+\[\s*([\d.,\s-]+)\s*\]", lowered)
+    if mag_match:
+        try:
+            coords = [float(x.strip()) for x in mag_match.group(1).split(",") if x.strip()]
+            mag = vector_magnitude(coords)
+            return f"Vector magnitude result: |{coords}| = {mag:.4f}"
+        except Exception as exc:
+            return f"Vector calculation error: {exc}"
+
+    # Vector dot product query routing
+    dot_match = re.search(r"dot\s+product\s+of\s+\[\s*([\d.,\s-]+)\s*\]\s+and\s+\[\s*([\d.,\s-]+)\s*\]", lowered)
+    if dot_match:
+        try:
+            vec1 = [float(x.strip()) for x in dot_match.group(1).split(",") if x.strip()]
+            vec2 = [float(x.strip()) for x in dot_match.group(2).split(",") if x.strip()]
+            res = vector_dot_product(vec1, vec2)
+            return f"Vector dot product result: {vec1} · {vec2} = {res:.4f}"
+        except Exception as exc:
+            return f"Vector calculation error: {exc}"
+
     conv_match = re.search(r"convert\s+([\d.]+)\s*([a-zA-Z°]+)\s+(?:to|in)\s+([a-zA-Z°]+)", lowered)
     if conv_match:
         try:
@@ -150,6 +172,7 @@ def choose_tool(question: str) -> str:
             return convert_units(val, conv_match.group(2), conv_match.group(3))
         except ValueError:
             pass
+
 
     if re.search(r"\b(date|today|clock)\b", lowered):
         return current_datetime_tool()
@@ -176,7 +199,8 @@ def choose_tool(question: str) -> str:
         return calculate_expression(question)
     return (
         "Tool route selected, but no supported tool matched the question. "
-        "Available tools are calculator, unit converter, and current date/time."
+        "Available tools are calculator, vector math, unit converter, and current date/time."
     )
+
 
 
