@@ -294,8 +294,11 @@ class LLMBackend:
 
     def route(self, question: str, messages: list[dict[str, str]]) -> str:
         """Route input question to retrieve, tool, or skip nodes."""
+        logger.info("Routing query with backend provider=%s, model=%s", self.provider, self.model_name)
         if self.provider == "offline":
-            return self._offline_route(question)
+            route = self._offline_route(question)
+            logger.info("Offline router selected decision: '%s'", route)
+            return route
 
         prompt = (
             "You are a router for a physics study buddy. Return one word only:\n"
@@ -311,7 +314,8 @@ class LLMBackend:
         )
         route = response.strip().lower().split()[0]
         if route not in {"retrieve", "tool", "skip"}:
-            return self._offline_route(question)
+            route = self._offline_route(question)
+        logger.info("LLM router selected decision: '%s'", route)
         return route
 
     def answer(
@@ -324,6 +328,7 @@ class LLMBackend:
         user_name: str,
         sources: list[dict[str, str]],
     ) -> str:
+        logger.info("Generating answer with backend provider=%s, eval_retries=%d", self.provider, eval_retries)
         if self.provider == "offline":
             return self._offline_answer(
                 question=question,
@@ -366,10 +371,13 @@ class LLMBackend:
         return response.strip()
 
     def evaluate(self, question: str, answer: str, retrieved: str) -> float:
+        logger.info("Evaluating answer faithfulness with provider=%s", self.provider)
         if not retrieved:
             return 1.0
         if self.provider == "offline":
-            return self._offline_faithfulness(answer, retrieved)
+            score = self._offline_faithfulness(answer, retrieved)
+            logger.info("Offline evaluation score: %.2f", score)
+            return score
         prompt = (
             "Rate faithfulness of the answer to the context on a 0.0 to 1.0 scale. "
             "Return only the numeric score."
@@ -386,14 +394,18 @@ class LLMBackend:
             ]
         ).strip()
         try:
-            return max(0.0, min(1.0, float(re.findall(r"\d+(?:\.\d+)?", raw)[0])))
-        except Exception:
+            score = max(0.0, min(1.0, float(re.findall(r"\d+(?:\.\d+)?", raw)[0])))
+            logger.info("LLM evaluation score: %.2f", score)
+            return score
+        except Exception as exc:
+            logger.warning("Error parsing LLM evaluation score: %s. Falling back to offline eval.", exc)
             return self._offline_faithfulness(answer, retrieved)
 
     def _chat(self, messages: list[dict[str, str]]) -> str:
         if self.client is None:
             return ""
         try:
+            logger.debug("Dispatching chat completion request to model=%s", self.model_name)
             response = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=messages,
@@ -401,7 +413,9 @@ class LLMBackend:
             )
             return response.choices[0].message.content or ""
         except Exception as exc:
+            logger.error("API call failed for model=%s: %s", self.model_name, exc)
             return ""
+
 
     def _offline_route(self, question: str) -> str:
         is_safe, category = check_input_safety(question)
