@@ -14,8 +14,10 @@ def main() -> None:
     parser.add_argument("--json", action="store_true", help="Output result as formatted JSON")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose debug logging")
     parser.add_argument("--top-k", type=int, default=3, help="Top K documents to retrieve (default: 3)")
+    parser.add_argument("--export-history", type=str, help="Export conversation history JSON to specified file path")
     parser.add_argument("--version", "-v", action="version", version="Physics Study Buddy Agent v1.0.0 (Capstone Submission)")
     args = parser.parse_args()
+
 
 
     if args.verbose:
@@ -68,6 +70,13 @@ def main() -> None:
     else:
         print(f"Answer: {payload['answer']}")
         print(f"Route: {payload['route']} | Faithfulness: {payload['faithfulness']}")
+
+    if args.export_history:
+        history = agent.get_thread_history(args.thread_id)
+        with open(args.export_history, "w", encoding="utf-8") as f:
+            json.dump(history, f, indent=2)
+        print(f"[Exported conversation history to '{args.export_history}']")
+
 
 
 if __name__ == "__main__":
