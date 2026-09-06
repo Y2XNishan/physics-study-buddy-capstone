@@ -1,5 +1,8 @@
+import json
 import re
+from uuid import uuid4
 
+import streamlit as st
 
 def format_physics_formulas(text: str) -> str:
     """Wrap common physics formulas in LaTeX formatting for Streamlit display."""
@@ -62,9 +65,14 @@ with st.sidebar:
         "It answers from a grounded physics knowledge base, remembers thread context, "
         "uses tools for date/time and arithmetic, and evaluates answer faithfulness."
     )
-    st.subheader("Filter Knowledge Base")
+    st.subheader("Explore Knowledge Base")
     categories = ["All Categories"] + agent.knowledge_base.get_all_categories()
     selected_category = st.selectbox("Topic Category", categories)
+    with st.expander("📖 Category Document Breakdown"):
+        stats = agent.knowledge_base.get_category_stats()
+        for cat, count in stats.items():
+            st.write(f"- **{cat}**: {count} topics")
+
 
     st.subheader("Quick Presets")
     preset_col1, preset_col2 = st.columns(2)
