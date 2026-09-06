@@ -61,11 +61,11 @@ These tools demonstrate routing beyond retrieval, which was a mandatory capstone
 
 ## Test Results Summary
 
-The project includes ten domain questions, two red-team prompt-injection tests, multi-turn memory verification, physical constants and scientific notation calculator tests, unit conversion tool tests, weighted phrase safety classifier tests, category filtering fallback tests, and 16 comprehensive pytest unit tests. All tests pass with 100% success rate:
+The project includes ten domain questions, two red-team prompt-injection tests, multi-turn memory verification, physical constants and scientific notation calculator tests, vector math tools, degree trig functions, unit conversion tool tests, weighted phrase safety classifier tests, category filtering fallback tests, direct keyword document search tests, and 19 comprehensive pytest unit tests. All tests pass with 100% success rate:
 - Faithfulness evaluation score: 1.00 average
 - Answer relevancy score: 1.00 average
 - Context precision score: 1.00 average
-- Pytest execution time: ~0.50 seconds (16/16 tests passing)
+- Pytest execution time: ~0.50 seconds (19/19 tests passing)
 
 ## RAGAS Baseline / Manual Baseline
 
@@ -76,16 +76,18 @@ The codebase includes a baseline evaluation pipeline for grounded question-answe
 
 ## Unique Points
 
-- Follows the exact helper-document structure: state-first design, isolated node functions, graph routing, MemorySaver thread management, calculator/datetime/unit-converter tool use, faithfulness evaluation loop, safety classifier, and Streamlit browser deployment.
+- Follows the exact helper-document structure: state-first design, isolated node functions, graph routing, MemorySaver thread management, calculator/vector/datetime/unit-converter tool use, faithfulness evaluation loop, safety classifier, and Streamlit browser deployment.
 - Offline-safe fallback path guarantees execution without cloud API keys.
 - Robust name extraction supporting punctuation cleaning, multi-word name phrasings, and common phrase filtering.
-- Math & physical constants support (`g`, `c`, `h`, `kB`, `sqrt`, `sin`, `cos`, `tan`, `pi`, `e`) and scientific notation (`3e8`) with division-by-zero protection in calculator tool.
+- Math & physical constants support (`g`, `c`, `h`, `kB`, `sqrt`, `sin`, `cos`, `tan`, `sind`, `cosd`, `tand`, `asin`, `acos`, `atan`, `pi`, `e`) and scientific notation (`3e8`) with division-by-zero protection in calculator tool.
+- 2D/3D Vector magnitude, dot product, and cross product functions.
 - Unit conversion tool (`convert_units`) supporting length, mass, time, energy, and temperature SI conversions.
 - Input safety classifier (`check_input_safety`) with weighted phrase scoring for prompt injection and out-of-scope query defense.
 - Word-boundary disambiguation preventing physics terms containing 'time' (e.g. time period) from falsely triggering datetime tool.
-- Category filtering with fallback and category document statistics in knowledge base.
+- Category filtering with fallback, direct keyword search (`search_by_keyword`), and category document statistics in knowledge base.
 - LaTeX physics equation rendering in Streamlit UI with expandable source cards, formula cheat-sheet, export history (JSON/Markdown), and quick preset question launcher buttons.
-- Command-line interface with interactive chat, `/reset` thread command, `--top-k` retriever limit, and `--version` flags.
+- Command-line interface with ANSI color formatting, interactive chat, `/reset` thread command, `--category`, `--export-history`, `--top-k` retriever limit, and `--version` flags.
+
 
 
 ## Future Improvements
