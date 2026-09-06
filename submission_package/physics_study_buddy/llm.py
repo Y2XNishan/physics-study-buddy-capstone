@@ -249,6 +249,14 @@ def check_input_safety(question: str) -> tuple[bool, str]:
     return True, "safe"
 
 
+def estimate_token_count(text: str) -> int:
+    """Estimate token count for a text string using standard ~4 characters per token heuristic."""
+    if not text:
+        return 0
+    return max(1, len(text) // 4)
+
+
+
 
 def _top_sentences(question: str, retrieved: str, limit: int = 4) -> list[str]:
     """Score and extract top relevant sentences from retrieved context based on question overlap."""
