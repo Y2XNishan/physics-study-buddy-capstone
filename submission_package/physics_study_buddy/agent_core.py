@@ -32,6 +32,9 @@ class CapstoneState(TypedDict, total=False):
 
 
 
+import time
+
+
 @dataclass
 class PhysicsStudyBuddyAgent:
     app: Any
@@ -40,13 +43,17 @@ class PhysicsStudyBuddyAgent:
     max_messages_window: int = 6
 
     def ask(self, question: str, thread_id: str) -> dict:
-
+        start_t = time.perf_counter()
         state: CapstoneState = {"question": question}
         result = self.app.invoke(
             state,
             config={"configurable": {"thread_id": thread_id}},
         )
+        elapsed = round(time.perf_counter() - start_t, 3)
+        result["elapsed_seconds"] = elapsed
+        logger.info("Agent question processing completed in %.3fs for thread_id=%s", elapsed, thread_id)
         return result
+
 
     def reset_thread(self, thread_id: str) -> None:
         """Clear memory saver state for a given thread_id."""
