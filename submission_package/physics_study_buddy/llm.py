@@ -45,6 +45,17 @@ GENERIC_TERMS = {
     "tell",
     "how",
     "why",
+    "please",
+    "can",
+    "you",
+    "me",
+    "about",
+    "definition",
+    "meaning",
+    "concept",
+    "overview",
+    "details",
+    "briefly",
 }
 
 
