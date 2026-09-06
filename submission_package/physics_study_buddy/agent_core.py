@@ -28,6 +28,8 @@ class CapstoneState(TypedDict, total=False):
     faithfulness: float
     eval_retries: int
     user_name: str
+    elapsed_seconds: float
+
 
 
 @dataclass
