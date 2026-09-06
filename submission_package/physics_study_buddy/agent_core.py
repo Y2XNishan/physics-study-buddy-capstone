@@ -35,8 +35,10 @@ class PhysicsStudyBuddyAgent:
     app: Any
     knowledge_base: KnowledgeBase
     llm_backend: LLMBackend
+    max_messages_window: int = 6
 
     def ask(self, question: str, thread_id: str) -> dict:
+
         state: CapstoneState = {"question": question}
         result = self.app.invoke(
             state,
@@ -215,7 +217,13 @@ def build_agent(max_messages_window: int = 6) -> PhysicsStudyBuddyAgent:
 
     app = graph.compile(checkpointer=MemorySaver())
     print("Graph compiled successfully")
-    return PhysicsStudyBuddyAgent(app=app, knowledge_base=knowledge_base, llm_backend=llm_backend)
+    return PhysicsStudyBuddyAgent(
+        app=app,
+        knowledge_base=knowledge_base,
+        llm_backend=llm_backend,
+        max_messages_window=max_messages_window,
+    )
+
 
 
 def default_thread_id() -> str:
