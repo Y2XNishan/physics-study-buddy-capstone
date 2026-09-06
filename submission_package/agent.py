@@ -22,7 +22,8 @@ def main() -> None:
         import logging
         logging.basicConfig(level=logging.INFO)
 
-    agent = build_agent()
+    agent = build_agent(top_k=args.top_k)
+
 
     if args.interactive:
         print("=== Physics Study Buddy Interactive Chat ===")

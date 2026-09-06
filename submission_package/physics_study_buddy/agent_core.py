@@ -90,7 +90,7 @@ def _extract_name(question: str) -> str:
     return ""
 
 
-def build_agent(max_messages_window: int = 6) -> PhysicsStudyBuddyAgent:
+def build_agent(max_messages_window: int = 6, top_k: int = 3) -> PhysicsStudyBuddyAgent:
     knowledge_base = build_knowledge_base()
     llm_backend = LLMBackend.from_environment()
 
@@ -115,7 +115,7 @@ def build_agent(max_messages_window: int = 6) -> PhysicsStudyBuddyAgent:
 
     def retrieval_node(state: CapstoneState) -> CapstoneState:
         """Perform vector search against physics knowledge base for relevant concepts."""
-        result = knowledge_base.query(state.get("question", ""), top_k=3)
+        result = knowledge_base.query(state.get("question", ""), top_k=top_k)
         topics = ", ".join(source["topic"] for source in result["sources"])
         logger.info("[TRACE] retrieval_node -> topics=%s", topics)
         return {
@@ -123,6 +123,7 @@ def build_agent(max_messages_window: int = 6) -> PhysicsStudyBuddyAgent:
             "sources": result["sources"],
             "tool_result": "",
         }
+
 
     def skip_retrieval_node(state: CapstoneState) -> CapstoneState:
         """Skip vector retrieval for non-physics or memory-only conversational queries."""
