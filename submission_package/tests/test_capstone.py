@@ -164,3 +164,19 @@ def test_jailbreak_refusal_and_thread_history():
     history = agent.get_thread_history(thread_id)
     assert len(history) > 0
 
+
+def test_physical_constants_and_scientific_notation_calculator():
+    from physics_study_buddy.tools import calculate_expression
+
+    # Physical constants (g, c, h, kB, pi, e)
+    res_const = calculate_expression("Calculate c * 2")
+    assert "600000000.0000" in res_const
+
+    res_g = calculate_expression("Calculate g * 10")
+    assert "98.0000" in res_g
+
+    # Scientific notation numbers
+    res_sci = calculate_expression("Calculate 3e8 / 1e3")
+    assert "300000.0000" in res_sci
+
+
