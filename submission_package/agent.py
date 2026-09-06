@@ -28,20 +28,27 @@ def main() -> None:
     if args.interactive:
         print("=== Physics Study Buddy Interactive Chat ===")
         print(f"Thread ID: {args.thread_id}")
-        print("Type 'exit' or 'quit' to end session.\n")
+        print("Commands: 'exit' or 'quit' to end session | '/reset' to clear conversation memory.\n")
         while True:
             try:
                 user_input = input("You: ").strip()
-                if not user_input or user_input.lower() in {"exit", "quit"}:
-                    print("Goodbye!")
+                if not user_input:
+                    continue
+                if user_input.lower() in {"exit", "quit"}:
+                    print("Goodbye! Thanks for using Physics Study Buddy.")
                     break
+                if user_input.lower() in {"/reset", "reset", "clear"}:
+                    agent.reset_thread(args.thread_id)
+                    print("[Memory reset for current thread.]\n")
+                    continue
                 result = agent.ask(user_input, args.thread_id)
                 print(f"\nAssistant: {result.get('answer', '')}")
                 print(f"[Route: {result.get('route')} | Faithfulness: {result.get('faithfulness')}]\n")
             except (KeyboardInterrupt, EOFError):
-                print("\n[Exiting chat session. Goodbye!]")
+                print("\n[Session terminated by user. Goodbye!]")
                 break
         return
+
 
     if not args.question:
         print("Provide a question with --question or use --interactive for interactive mode.")
