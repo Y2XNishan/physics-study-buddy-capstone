@@ -9,16 +9,16 @@ A grounded, high-faithfulness Agentic AI assistant built with **LangGraph**, **C
 ```mermaid
 graph TD
     A[User Question] --> B[memory_node: Extract Name & Manage Window]
-    B --> C[router_node: Classify Intent]
-    C -->|Concept / Syllabus| D[retrieval_node: Vector Search ChromaDB]
-    C -->|Math / Clock| E[tool_node: Calculator / Datetime]
-    C -->|Memory / Refusal| F[skip_retrieval_node: Direct Answer]
+    B --> C[router_node: Classify Intent & Safety Risk]
+    C -->|Concept / Syllabus| D[retrieval_node: Vector Search ChromaDB with Category Filter]
+    C -->|Math / Units / Clock| E[tool_node: Calculator / Unit Converter / Datetime]
+    C -->|Memory / Refusal / Scope| F[skip_retrieval_node: Direct Answer / Safety Refusal]
     D --> G[answer_node: Grounded Generation]
     E --> G
     F --> G
-    G --> H[eval_node: Evaluate Faithfulness]
+    G --> H[eval_node: Evaluate Faithfulness Score]
     H -->|Faithfulness < 0.7 & Retries < 2| G
-    H -->|PASS| I[save_node: Persist State & History]
+    H -->|PASS| I[save_node: Persist State & Window History]
     I --> J[Final Assistant Output]
 ```
 
@@ -27,15 +27,17 @@ graph TD
 ## ✨ Features & Capstone Highlights
 
 - **LangGraph StateGraph Engine**: Built with an isolated 8-node state machine (`memory`, `router`, `retrieve`, `skip`, `tool`, `answer`, `eval`, `save`).
-- **Grounded Vector Search (RAG)**: Uses an in-memory ChromaDB collection populated with 12 focused B.Tech physics topic modules categorized by domain.
-- **Thread Memory Persistence**: Full conversational context retention across turns managed with `MemorySaver` and `thread_id`.
+- **Grounded Vector Search (RAG)**: Uses an in-memory ChromaDB collection populated with 12 focused B.Tech physics topic modules categorized by domain, featuring L2 normalized vector search and optional category query filtering with auto-fallback.
+- **Thread Memory Persistence**: Full conversational context retention across turns managed with `MemorySaver`, `thread_id`, configurable sliding window size (`max_messages_window`), and role-filtered history retrieval (`get_thread_history`).
 - **Tool Scaffolding & Disambiguation**:
-  - **Safe Math Calculator**: Evaluates arithmetic, power exponents, modulo `%`, floor division `//`, and functions (`sqrt`, `sin`, `cos`, `tan`, `log`, `abs`, `radians`, `degrees`) with ZeroDivision, Overflow, and Math Domain error protection.
+  - **Safe Math & Physics Calculator**: Evaluates arithmetic, physical constants (`g`, `c`, `h`, `kB`, `G`, `e_charge`, `pi`, `e`), scientific notation (`3e8`, `1.6e-19`), power exponents, modulo `%`, floor division `//`, and math functions (`sqrt`, `sin`, `cos`, `tan`, `log`, `abs`, `radians`, `degrees`) with ZeroDivision, Overflow, and Domain Error safety.
+  - **Physical Unit Converter**: Converts length, mass, time, energy, and temperature units (`convert_units`).
   - **Date/Time Tool**: Word-boundary regex disambiguates datetime queries from physics expressions (e.g. *time period of SHM* vs *current date*).
+- **Safety & Injection Defense**: Weighted phrase scoring classifier detects prompt injection, system prompt leakage requests, and out-of-scope queries (`check_input_safety`).
 - **Faithfulness Self-Evaluation Loop**: Automatically rates answer faithfulness against retrieved context and triggers targeted retries for low-scoring answers.
 - **Deterministic Offline Fallback**: Fully functional without requiring external LLM cloud API keys, while supporting optional **OpenAI** or **Groq** backends.
-- **Streamlit Web Interface**: Features LaTeX formula formatting (`$V=IR$`, `$F=ma$`), topic category filtering, chat history export, metric badges, topic preset buttons, and expandable source cards.
-- **CLI Executable**: Console script entry point `physics-buddy` supporting `--interactive`, `--json`, `--top-k`, `--verbose`, and `--version` flags.
+- **Streamlit Web Interface**: Features LaTeX formula formatting (`$V=IR$`, `$F=ma$`), topic category dropdown & document breakdown, JSON/Markdown chat export, metric badges, formula cheat-sheet, and expandable source cards.
+- **CLI Executable**: Console script entry point `physics-buddy` supporting `--interactive`, `/reset`, `--json`, `--top-k`, `--verbose`, and `--version` flags.
 
 ---
 
@@ -52,10 +54,13 @@ physics-buddy --question "What is Ohm's law?" --json
 # 3. Run CLI in interactive chat mode
 physics-buddy --interactive
 
-# 4. Run the full pytest test suite
+# 4. Run unit conversion example
+physics-buddy --question "Convert 5 km to m"
+
+# 5. Run the full pytest test suite
 pytest
 
-# 5. Run the Streamlit web application
+# 6. Run the Streamlit web application
 streamlit run submission_package/capstone_streamlit.py
 ```
 
@@ -75,10 +80,10 @@ export GROQ_API_KEY="your-groq-api-key"
 
 ## 🧪 Testing & Quality Assurance
 
-Run the test suite to verify graph nodes, memory persistence, tool routes, red-team prompt injections, category filtering, and vector search:
+Run the test suite to verify graph nodes, memory persistence, tool routes, physical constants, scientific notation, unit conversions, red-team prompt injections, category filtering, and vector search:
 
 ```bash
-# Run pytest directly (13/13 passing in <0.5s)
+# Run pytest directly (16/16 passing)
 pytest
 
 # Or run the integrated test runner script
@@ -89,9 +94,10 @@ python submission_package/run_capstone_tests.py
 
 ## 📄 Key Project Files
 
-- `submission_package/agent.py`: Command line interface with interactive chat, JSON, top-k, and version flags.
-- `submission_package/capstone_streamlit.py`: Browser-based Streamlit web application with category filters & export.
+- `submission_package/agent.py`: Command line interface with interactive chat, `/reset`, JSON, top-k, and version flags.
+- `submission_package/capstone_streamlit.py`: Browser-based Streamlit web application with category filters, formula cheat-sheet & JSON/Markdown export.
 - `submission_package/physics_study_buddy/`: Core agent library modules (`agent_core.py`, `knowledge_base.py`, `llm.py`, `tools.py`).
-- `submission_package/tests/test_capstone.py`: Comprehensive Pytest suite (13/13 tests passing).
-- `submission_package/report/generate_final_report.py`: Automated ReportLab PDF generator script.
+- `submission_package/tests/test_capstone.py`: Comprehensive Pytest suite (16/16 tests passing).
+- `submission_package/report/generate_final_report.py`: Automated ReportLab PDF generator script with missing image fallback containers.
 - `submission_package/report/project_documentation.md`: Detailed capstone documentation.
+
