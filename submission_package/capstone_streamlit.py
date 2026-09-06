@@ -105,8 +105,11 @@ with st.sidebar:
     st.subheader("Runtime Status")
     st.write(f"**LLM Backend:** `{agent.llm_backend.provider}`")
     st.write(f"**Embedder:** `{agent.knowledge_base.embedder_name}`")
+    st.write(f"**Documents Indexed:** `{len(agent.knowledge_base.docs)}`")
+    st.write(f"**Memory Window:** `{agent.max_messages_window} messages`")
     st.write(f"**Session Thread:** `{st.session_state.get('thread_id', '')[:18]}...`")
     st.write(f"**Session Turns:** `{len(st.session_state.messages) // 2}`")
+
     
     if st.button("New conversation", use_container_width=True):
         reset_conversation()
