@@ -34,6 +34,12 @@ SAFE_FUNCTIONS = {
 SAFE_CONSTANTS = {
     "pi": math.pi,
     "e": math.e,
+    "g": 9.8,
+    "c": 3e8,
+    "h": 6.626e-34,
+    "kB": 1.38e-23,
+    "G": 6.674e-11,
+    "e_charge": 1.602e-19,
 }
 
 
