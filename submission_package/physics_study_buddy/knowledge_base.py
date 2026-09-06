@@ -232,6 +232,17 @@ PHYSICS_DOCS = [
 ]
 
 
+def normalize_embeddings(vectors: np.ndarray | list[list[float]]) -> list[list[float]]:
+    """Normalize input vector matrix using L2 norm to ensure cosine similarity metric consistency."""
+    arr = np.array(vectors, dtype=float)
+    if arr.ndim == 1:
+        arr = np.expand_dims(arr, axis=0)
+    norms = np.linalg.norm(arr, axis=1, keepdims=True)
+    norms[norms == 0] = 1.0
+    normalized = arr / norms
+    return normalized.tolist()
+
+
 class TfidfEmbedder:
     """Fallback embedder used when SentenceTransformer is unavailable."""
 
@@ -241,10 +252,8 @@ class TfidfEmbedder:
 
     def encode(self, texts: Iterable[str]) -> list[list[float]]:
         matrix = self.vectorizer.transform(list(texts)).toarray().astype(float)
-        norms = np.linalg.norm(matrix, axis=1, keepdims=True)
-        norms[norms == 0] = 1.0
-        normalized = matrix / norms
-        return normalized.tolist()
+        return normalize_embeddings(matrix)
+
 
 
 @dataclass
