@@ -198,9 +198,11 @@ def build_story(styles):
     story.append(bullet("LangGraph StateGraph with 8 required nodes", styles))
     story.append(bullet("ChromaDB RAG knowledge base with 12 physics documents", styles))
     story.append(bullet("MemorySaver with thread_id-based conversation continuity", styles))
-    story.append(bullet("Calculator and date/time tool routes", styles))
+    story.append(bullet("Calculator, vector math, unit converter, and date/time tool routes", styles))
+    story.append(bullet("Weighted phrase scoring safety classifier for injection defense", styles))
     story.append(bullet("Faithfulness scoring with retry loop", styles))
-    story.append(bullet("Streamlit deployment for browser-based use", styles))
+    story.append(bullet("Streamlit deployment with category filtering and keyword search", styles))
+
 
     story += section("Tech Stack", styles)
     for item in [
