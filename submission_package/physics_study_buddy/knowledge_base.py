@@ -247,8 +247,9 @@ class TfidfEmbedder:
     """Fallback embedder used when SentenceTransformer is unavailable."""
 
     def __init__(self, texts: Iterable[str]) -> None:
-        self.vectorizer = TfidfVectorizer(stop_words="english")
+        self.vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 2))
         self.vectorizer.fit(list(texts))
+
 
     def encode(self, texts: Iterable[str]) -> list[list[float]]:
         matrix = self.vectorizer.transform(list(texts)).toarray().astype(float)
