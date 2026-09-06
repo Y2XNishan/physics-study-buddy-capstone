@@ -88,6 +88,34 @@ def current_datetime_tool() -> str:
     return now.strftime("Current date and time: %A, %d %B %Y, %I:%M %p")
 
 
+def convert_units(value: float, from_unit: str, to_unit: str) -> str:
+    """Convert common physical quantities between SI and non-SI units."""
+    from_u, to_u = from_unit.strip().lower(), to_unit.strip().lower()
+    if from_u == to_u:
+        return f"Unit conversion result: {value} {from_unit} = {value:.4f} {to_unit}"
+
+    # Base factors relative to SI standard units (m, kg, s, J)
+    length = {"m": 1.0, "km": 1000.0, "cm": 0.01, "mm": 0.001, "miles": 1609.34, "ft": 0.3048}
+    mass = {"kg": 1.0, "g": 0.001, "mg": 1e-6, "lb": 0.453592}
+    time_units = {"s": 1.0, "min": 60.0, "hr": 3600.0}
+    energy = {"j": 1.0, "ev": 1.60218e-19, "cal": 4.184}
+
+    for unit_dict in [length, mass, time_units, energy]:
+        if from_u in unit_dict and to_u in unit_dict:
+            val_in_si = value * unit_dict[from_u]
+            result = val_in_si / unit_dict[to_u]
+            return f"Unit conversion result: {value} {from_unit} = {result:.4e}" if abs(result) < 1e-3 or abs(result) > 1e4 else f"Unit conversion result: {value} {from_unit} = {result:.4f} {to_unit}"
+
+    # Temperature explicit conversions
+    if from_u in ["c", "celsius"] and to_u in ["k", "kelvin"]:
+        return f"Unit conversion result: {value} °C = {value + 273.15:.2f} K"
+    if from_u in ["k", "kelvin"] and to_u in ["c", "celsius"]:
+        return f"Unit conversion result: {value} K = {value - 273.15:.2f} °C"
+
+    return f"Unit conversion error: Unsupported conversion from '{from_unit}' to '{to_unit}'."
+
+
+
 def choose_tool(question: str) -> str:
     """Disambiguate query intent and dispatch to date/time or calculator tool."""
     lowered = question.lower()
