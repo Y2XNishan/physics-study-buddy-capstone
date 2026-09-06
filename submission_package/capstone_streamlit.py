@@ -74,7 +74,23 @@ with st.sidebar:
             st.write(f"- **{cat}**: {count} topics")
 
 
+    st.subheader("Formula Quick Reference")
+    with st.expander("⚡ Core Physics Formulas"):
+        st.markdown(
+            """
+            - **Kinematics**: $v = u + at$, $s = ut + \\frac{1}{2}at^2$, $v^2 = u^2 + 2as$
+            - **Newton's Law**: $F = ma$, $p = mv$
+            - **Work & Energy**: $W = F s \\cos\\theta$, $K = \\frac{1}{2}mv^2$, $U = mgh$
+            - **Gravitation**: $F = \\frac{G m_1 m_2}{r^2}$, $g = 9.8 \\text{ m/s}^2$
+            - **SHM**: $T = 2\\pi \\sqrt{\\frac{m}{k}}$, $T = 2\\pi \\sqrt{\\frac{l}{g}}$
+            - **Optics**: $\\frac{1}{f} = \\frac{1}{v} - \\frac{1}{u}$, $n_1 \\sin\\theta_1 = n_2 \\sin\\theta_2$
+            - **Electrostatics**: $F = \\frac{k q_1 q_2}{r^2}$, $V = IR$, $P = VI$
+            - **Thermodynamics**: $\\Delta Q = \\Delta U + \\Delta W$
+            """
+        )
+
     st.subheader("Quick Presets")
+
     preset_col1, preset_col2 = st.columns(2)
     with preset_col1:
         if st.button("Ohm's Law", use_container_width=True):
