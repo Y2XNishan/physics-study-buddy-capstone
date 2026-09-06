@@ -328,6 +328,17 @@ class KnowledgeBase:
             categories.add(cat)
         return sorted(list(categories))
 
+    def search_by_keyword(self, keyword: str) -> list[dict[str, Any]]:
+        """Search documents directly by matching keyword string in topic, category, or body text."""
+        kw = keyword.lower().strip()
+        if not kw:
+            return []
+        matches = []
+        for doc in self.docs:
+            if kw in doc["topic"].lower() or kw in doc["category"].lower() or kw in doc["text"].lower():
+                matches.append(doc)
+        return matches
+
     def get_category_stats(self) -> dict[str, int]:
         """Return a mapping of topic categories to their document counts."""
         stats: dict[str, int] = {}
@@ -335,6 +346,7 @@ class KnowledgeBase:
             cat = doc.get("category", "General Physics")
             stats[cat] = stats.get(cat, 0) + 1
         return stats
+
 
 
 
