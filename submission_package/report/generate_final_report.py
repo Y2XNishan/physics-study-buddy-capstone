@@ -101,7 +101,9 @@ def page_number(canvas, doc):
     canvas.restoreState()
 
 
-def fit_image(path: Path, max_width: float, max_height: float) -> Image | Paragraph:
+from reportlab.platypus import Table, TableStyle
+
+def fit_image(path: Path, max_width: float, max_height: float) -> Image | Table:
     try:
         if path.exists():
             image = Image(str(path))
@@ -112,7 +114,23 @@ def fit_image(path: Path, max_width: float, max_height: float) -> Image | Paragr
             return image
     except Exception:
         pass
-    return Paragraph(f"<i>[Image unavailable: {path.name}]</i>", getSampleStyleSheet()["Normal"])
+    placeholder_text = Paragraph(
+        f"<b>[Screenshot Container: {path.name}]</b><br/><font size=9 color='#666666'>Image file placeholder for report illustration</font>",
+        getSampleStyleSheet()["Normal"],
+    )
+    table = Table([[placeholder_text]], colWidths=[max_width], rowHeights=[60])
+    table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#f0f4f8")),
+                ("BOX", (0, 0), (-1, -1), 1, colors.HexColor("#cbd5e1")),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ]
+        )
+    )
+    return table
+
 
 
 def section(title: str, styles) -> list:
