@@ -64,7 +64,7 @@ def calculate_expression(question: str) -> str:
         # Strip common action keywords first
         cleaned = re.sub(r"(?i)^(calculate|solve|compute|what is|find)\s+", "", question.strip())
         cleaned = cleaned.rstrip("?.!")
-        match = re.search(r"([a-zA-Z0-9_+\-*/()%\s.^]+)", cleaned)
+        match = re.search(r"([a-zA-Z0-9_+\-*/()%\s.^eE]+)", cleaned)
         if not match:
             return "Calculator tool could not find a valid arithmetic expression."
         expression = match.group(1).strip().replace("^", "**")
