@@ -204,4 +204,22 @@ def test_unit_conversion_tool_and_safety_classifier():
     assert cat_normal == "safe"
 
 
+def test_category_stats_and_memory_history_filtering():
+    agent = build_agent()
+    kb = agent.knowledge_base
+
+    stats = kb.get_category_stats()
+    assert "Mechanics" in stats
+    assert stats["Mechanics"] >= 4
+
+    thread_id = "pytest-history-filter"
+    agent.ask("My name is Sam.", thread_id)
+    agent.ask("What is Coulomb's law?", thread_id)
+
+    user_history = agent.get_thread_history(thread_id, role_filter="user")
+    assert len(user_history) == 2
+    assert all(m["role"] == "user" for m in user_history)
+
+
+
 
