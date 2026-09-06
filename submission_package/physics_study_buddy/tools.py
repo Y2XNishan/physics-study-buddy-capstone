@@ -112,7 +112,24 @@ def convert_units(value: float, from_unit: str, to_unit: str) -> str:
     if from_u in ["k", "kelvin"] and to_u in ["c", "celsius"]:
         return f"Unit conversion result: {value} K = {value - 273.15:.2f} °C"
 
-    return f"Unit conversion error: Unsupported conversion from '{from_unit}' to '{to_unit}'."
+def vector_magnitude(vec: list[float]) -> float:
+    """Calculate Euclidean norm/magnitude of a 2D or 3D vector."""
+    return math.sqrt(sum(x * x for x in vec))
+
+
+def vector_dot_product(vec_a: list[float], vec_b: list[float]) -> float:
+    """Calculate dot product of two vectors of equal dimension."""
+    if len(vec_a) != len(vec_b):
+        raise ValueError("Vectors must have the same dimension for dot product.")
+    return sum(a * b for a, b in zip(vec_a, vec_b))
+
+
+def vector_cross_product_2d(vec_a: list[float], vec_b: list[float]) -> float:
+    """Calculate scalar cross product magnitude for 2D vectors (ax*by - ay*bx)."""
+    if len(vec_a) < 2 or len(vec_b) < 2:
+        raise ValueError("Vectors must have at least 2 components for cross product.")
+    return vec_a[0] * vec_b[1] - vec_a[1] * vec_b[0]
+
 
 
 
