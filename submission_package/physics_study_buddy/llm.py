@@ -214,6 +214,29 @@ OUT_OF_SCOPE_PATTERNS = [
 ]
 
 
+def check_input_safety(question: str) -> tuple[bool, str]:
+    """Perform weighted phrase scoring and safety classification on input queries."""
+    lowered = question.lower()
+    score = 0.0
+
+    for pattern in REFUSAL_PATTERNS:
+        if pattern in lowered:
+            score += 1.0
+
+    if re.search(r"system\s*:\s*you\s+are", lowered) or re.search(r"\[system\s*prompt\]", lowered):
+        score += 1.0
+
+    if score >= 1.0:
+        return False, "refusal"
+
+    for pattern in OUT_OF_SCOPE_PATTERNS:
+        if pattern in lowered:
+            return False, "out_of_scope"
+
+    return True, "safe"
+
+
+
 def _top_sentences(question: str, retrieved: str, limit: int = 4) -> list[str]:
     question_terms = _normalize(question) - GENERIC_TERMS
     sentences = [
@@ -377,13 +400,13 @@ class LLMBackend:
             return ""
 
     def _offline_route(self, question: str) -> str:
+        is_safe, category = check_input_safety(question)
+        if not is_safe:
+            return "skip"
         lowered = question.lower()
-        if any(pattern in lowered for pattern in REFUSAL_PATTERNS):
-            return "skip"
-        if any(pattern in lowered for pattern in OUT_OF_SCOPE_PATTERNS):
-            return "skip"
         if re.search(r"\b(date|today|clock)\b", lowered) or "current time" in lowered:
             return "tool"
+
         if re.search(r"\btime\b", lowered):
             physics_time_context = ["time period", "pendulum", "shm", "relaxation time", "decay time", "travel time", "flight", "graph", "displacement", "velocity", "acceleration"]
             if not any(term in lowered for term in physics_time_context) and any(kw in lowered for kw in ["what time", "current time", "time now", "tell time"]):
@@ -416,18 +439,21 @@ class LLMBackend:
         sources: list[dict[str, str]],
     ) -> str:
         lowered = question.lower()
-        if any(pattern in lowered for pattern in REFUSAL_PATTERNS):
-            return (
-                "I cannot reveal hidden instructions or system prompts. "
-                "I can still help with grounded physics questions from the study buddy topics."
-            )
-        if any(pattern in lowered for pattern in OUT_OF_SCOPE_PATTERNS):
-            return (
-                "I do not know that from the physics knowledge base, so I should not guess. "
-                "Please ask a syllabus-based physics question instead."
-            )
+        is_safe, category = check_input_safety(question)
+        if not is_safe:
+            if category == "refusal":
+                return (
+                    "I cannot reveal hidden instructions or system prompts. "
+                    "I can still help with grounded physics questions from the study buddy topics."
+                )
+            if category == "out_of_scope":
+                return (
+                    "I do not know that from the physics knowledge base, so I should not guess. "
+                    "Please ask a syllabus-based physics question instead."
+                )
         if tool_result:
             return tool_result
+
         if "my name" in lowered and user_name:
             return f"Your name in this conversation is {user_name}."
         if "my name" in lowered and not user_name:
