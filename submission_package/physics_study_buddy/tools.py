@@ -117,8 +117,16 @@ def convert_units(value: float, from_unit: str, to_unit: str) -> str:
 
 
 def choose_tool(question: str) -> str:
-    """Disambiguate query intent and dispatch to date/time or calculator tool."""
+    """Disambiguate query intent and dispatch to date/time, unit conversion, or calculator tool."""
     lowered = question.lower()
+    conv_match = re.search(r"convert\s+([\d.]+)\s*([a-zA-Z°]+)\s+(?:to|in)\s+([a-zA-Z°]+)", lowered)
+    if conv_match:
+        try:
+            val = float(conv_match.group(1))
+            return convert_units(val, conv_match.group(2), conv_match.group(3))
+        except ValueError:
+            pass
+
     if re.search(r"\b(date|today|clock)\b", lowered):
         return current_datetime_tool()
     if re.search(r"\b(time|day)\b", lowered):
@@ -144,6 +152,7 @@ def choose_tool(question: str) -> str:
         return calculate_expression(question)
     return (
         "Tool route selected, but no supported tool matched the question. "
-        "Available tools are calculator and current date/time."
+        "Available tools are calculator, unit converter, and current date/time."
     )
+
 
