@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import math
+import re
 from dataclasses import dataclass
 from typing import Iterable
+
 
 import chromadb
 import numpy as np

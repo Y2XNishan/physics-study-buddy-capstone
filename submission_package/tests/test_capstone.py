@@ -262,6 +262,24 @@ def test_keyword_search_and_topic_summary():
     assert "Category" in summary
 
 
+def test_agent_token_estimation_and_state_snapshot():
+    from physics_study_buddy.llm import estimate_token_count
+
+    # Token estimation
+    assert estimate_token_count("Hello world") > 0
+
+    agent = build_agent()
+    thread_id = "pytest-snapshot"
+    res = agent.ask("What is power in physics?", thread_id)
+    
+    assert "elapsed_seconds" in res
+    assert res["elapsed_seconds"] >= 0.0
+
+    snapshot = agent.get_state_snapshot(thread_id)
+    assert "messages" in snapshot
+
+
+
 
 
 
