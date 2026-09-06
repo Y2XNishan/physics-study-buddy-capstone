@@ -339,6 +339,15 @@ class KnowledgeBase:
                 matches.append(doc)
         return matches
 
+    def get_topic_summary(self, topic_name: str) -> str:
+        """Extract a brief topic summary containing category and overview sentences."""
+        doc = self.get_doc_by_topic(topic_name)
+        if not doc:
+            return f"Topic '{topic_name}' not found in knowledge base."
+        sentences = [s.strip() for s in doc["text"].split(".") if len(s.strip()) > 10]
+        overview = ". ".join(sentences[:2]) + "." if sentences else doc["text"][:150]
+        return f"**Topic**: {doc['topic']} | **Category**: {doc['category']}\n{overview}"
+
     def get_category_stats(self) -> dict[str, int]:
         """Return a mapping of topic categories to their document counts."""
         stats: dict[str, int] = {}
@@ -346,6 +355,7 @@ class KnowledgeBase:
             cat = doc.get("category", "General Physics")
             stats[cat] = stats.get(cat, 0) + 1
         return stats
+
 
 
 
